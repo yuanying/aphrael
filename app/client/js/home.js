@@ -1,18 +1,26 @@
 import m from 'mithril';
 
 export default {
-    controller: () => {},
-    view: () => {
+    controller: () => {
+      return {
+        index: m.request({
+          dataType: "jsonp",
+          callbackName: "loadPage",
+          url: "./index.js"
+        })
+      }
+    },
+    view: (ctrl) => {
         return ('.container-fluid', [
             m('.row' , [
                 m('.col-sm-10.col-sm-offset-1.col-md-10.col-md-offset-1', [
                     m('.page-header', [
-                        m('h3', 'Bootswatch Yetiサンプル')
+                        m('h3', 'Bootswatch Yeti Sample')
                     ]),
                     m('.alert.alert-info[role="alert"]', [
                         m('span.glyphicon.glyphicon-exclamation-sign[aria-hidden="true"]'),
                         m('span.sr-only', 'Info:'),
-                        ' Infoのサンプルです。'
+                        ctrl.index().name
                     ])
                 ]),
                 m('.col-sm-10.col-sm-offset-1.col-md-10.col-md-offset-1', [

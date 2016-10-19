@@ -16,6 +16,14 @@ gulp.task('nodemon', () => {
   })
 });
 
+gulp.task('copy-to-example', ['webpack'], () => {
+  return gulp.src(
+    [ 'dist/*.html', 'dist/js/**', 'dist/images/**' ],
+    { base: 'dist' }
+  )
+  .pipe( gulp.dest( 'example' ) );
+});
+
 gulp.task('webpack', (callback) => {
     let myConfig = Object.create(webpackConfig);
     webpack(myConfig, function(err, stats) {
@@ -35,7 +43,7 @@ gulp.task('lint', () => {
 });
 
 gulp.task('watch', () => {
-    gulp.watch(config.gulpServerSrc, ['lint']);
+    gulp.watch('app/client/**/*', ['copy-to-example']);
 });
 
-gulp.task('default', ['watch']);
+gulp.task('default', ['copy-to-example']);
