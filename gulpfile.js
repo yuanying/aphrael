@@ -4,7 +4,7 @@ const gutil = require('gulp-util');
 const eslint = require('gulp-eslint');
 const nodemon = require('gulp-nodemon');
 const config = require('./config');
-const webpackConfig = require('./webpack.config.production');
+const webpackConfig = require('./webpack.config');
 const webpack = require('webpack');
 
 gulp.task('nodemon', () => {

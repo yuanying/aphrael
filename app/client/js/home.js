@@ -20,7 +20,7 @@ export default {
                     m('.alert.alert-info[role="alert"]', [
                         m('span.glyphicon.glyphicon-exclamation-sign[aria-hidden="true"]'),
                         m('span.sr-only', 'Info:'),
-                        ctrl.index().name
+                        ctrl.index().images
                     ])
                 ]),
                 m('.col-sm-10.col-sm-offset-1.col-md-10.col-md-offset-1', [

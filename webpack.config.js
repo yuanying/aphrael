@@ -4,7 +4,6 @@ const path = require('path');
 module.exports = {
     devtool: 'eval-source-map',
     entry: [
-        'webpack-hot-middleware/client',
         path.join(__dirname, 'app/client/js/main.js')
     ],
     output: {
@@ -14,7 +13,6 @@ module.exports = {
     },
     plugins: [
         new webpack.optimize.OccurenceOrderPlugin(),
-        new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin()
     ],
     module: {

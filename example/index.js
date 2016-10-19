@@ -1,3 +1,9 @@
 loadPage({
-  name: 'hoge'
+  parent: null,
+  dirs: [
+
+  ],
+  images: [
+    
+  ]
 });
