@@ -4,7 +4,7 @@ export default {
   controller: (args) => {
     return {
       imageUrl: (image) => {
-        return `/`;
+        return `images/${args.index}/${image.path}`;
       },
       thumbUrl: (image) => {
         return `thumbs/${args.index}/${image.path}`;

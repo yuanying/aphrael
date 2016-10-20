@@ -56,4 +56,9 @@ class Aphrael::Server < Sinatra::Base
     send_file image.thumbnail_path.to_s
   end
 
+  get '/images/:index/*' do |index, path|
+    image = Aphrael::Image.get(index, path)
+    send_file image.real_path.to_s
+  end
+
 end
