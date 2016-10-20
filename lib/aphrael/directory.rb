@@ -2,17 +2,17 @@ require 'uri'
 
 class Aphrael::Directory < Aphrael::Resource
 
-  def self.get index, path, parent=nil
+  def self.get index, path
     @cache ||= {}
     index = index.to_i
     real_path = self.real_path(index, path)
     unless directory = @cache[real_path]
-      directory = self.new(index, path, parent)
+      directory = self.new(index, path)
     end
     directory
   end
 
-  def initialize index, path, parent=nil
+  def initialize index, path
     super
   end
 

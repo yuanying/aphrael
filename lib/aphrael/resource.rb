@@ -28,22 +28,14 @@ class Aphrael::Resource
     File.expand_path(self.config.image_dirs[index]['path'])
   end
 
-  def initialize index, path, parent=nil
+  def initialize index, path
     @path   = path
     @index  = index.to_i
     raise if File.expand_path(real_path).length < self.class.image_dir(index).length
-    @parent = parent if parent
   end
 
   attr_accessor :path
   attr_accessor :index
-
-  def parent
-    unless defined?(@parent)
-      @parent = Directory.get(index, File.dirname(path))
-    end
-    @parent
-  end
 
   def real_path
     self.class.real_path(index, path)

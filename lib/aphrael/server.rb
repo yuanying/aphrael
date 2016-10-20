@@ -4,6 +4,7 @@ require 'sinatra/base'
 
 class Aphrael::Server < Sinatra::Base
 
+  set :static, true
   set :public_folder, File.join(File.dirname(__FILE__), '..', '..', 'dist')
 
   configure do
@@ -15,6 +16,7 @@ class Aphrael::Server < Sinatra::Base
     require 'sinatra-xsendfile'
     helpers Sinatra::Xsendfile
     Sinatra::Xsendfile.replace_send_file!
+    set :xsf_header, 'X-Accel-Redirect'
   end
 
   configure :development do
@@ -35,9 +37,16 @@ class Aphrael::Server < Sinatra::Base
   end
 
   get '/api/dirs/:index/*' do |index, path|
-    directory = Aphrael::Directory.get(@index, path)
+    directory = Aphrael::Directory.get(index, path)
     return directory.children
       .map{|e| e.to_h }
+      .to_json
+  end
+
+  get '/api/images/:index/*' do |index, path|
+    directory = Aphrael::Directory.get(index, path)
+    Aphrael::Image.images(directory)
+      .map{|e| e.metadata }
       .to_json
   end
 

@@ -7,6 +7,7 @@ gem 'sinatra-xsendfile'
 gem 'json'
 gem 'RubyInline'
 gem 'image_science'
+gem "fastimage"
 
 group :production do
   gem 'thin'
