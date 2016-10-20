@@ -17,7 +17,7 @@ export default {
     let photoswipe = (e) => {
       let pswpElement = document.querySelectorAll('.pswp')[0];
       let options = {
-        index: 0,
+        index: parseInt(e.target.dataset.index),
         shareButtons: [
           {id:'download', label:'Download image', url:'{{raw_image_url}}', download:true}
         ]
@@ -34,14 +34,14 @@ export default {
   },
   view: (ctrl, args) => {
     return m('.container-fluid.images', [
-      m('.row' , args.images.map((image) => {
+      m('.row' , args.images.map((image, index) => {
         let attr = {
           href: ctrl.imageUrl(image),
           onclick: ctrl.photoswipe
         };
         return m('a', attr, [
           m('.col-xs-3.col-sm-2.col-md-1.col-lg-1.image', [
-            m('img', { src: ctrl.thumbUrl(image) }),
+            m('img', { src: ctrl.thumbUrl(image), "data-index": index }),
           ])
         ]);
       }))

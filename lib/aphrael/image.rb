@@ -47,7 +47,6 @@ class Aphrael::Image < Aphrael::Resource
 
     size = ::FastImage.size(self.real_path)
     @metadata = {
-      index: self.index,
       path: self.path,
       w: size[0],
       h: size[1],
