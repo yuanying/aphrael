@@ -1,5 +1,6 @@
 import m from 'mithril';
 import Dirs from './dirs'
+import Images from './images'
 import Breadcrumbs from './breadcrumbs'
 
 export default {
@@ -17,13 +18,18 @@ export default {
       dirs: m.request({
         method: "GET",
         url: `api/dirs/${index}/${current}`
+      }),
+      images: m.request({
+        method: "GET",
+        url: `api/images/${index}/${current}`
       })
     }
   },
   view: (ctrl) => {
     return [
       m.component(Breadcrumbs, { index: ctrl.index, paths: ctrl.paths}),
-      m.component(Dirs, { dirs: ctrl.dirs(), index: ctrl.index })
+      m.component(Dirs, { dirs: ctrl.dirs(), index: ctrl.index }),
+      m.component(Images, { images: ctrl.images(), index: ctrl.index })
     ];
   }
 };

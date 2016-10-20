@@ -50,4 +50,10 @@ class Aphrael::Server < Sinatra::Base
       .to_json
   end
 
+  get '/thumbs/:index/*' do |index, path|
+    image = Aphrael::Image.get(index, path)
+    image.create_thumbnail
+    send_file image.thumbnail_path.to_s
+  end
+
 end

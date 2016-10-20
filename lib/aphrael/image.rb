@@ -48,13 +48,15 @@ class Aphrael::Image < Aphrael::Resource
     size = ::FastImage.size(self.real_path)
     @metadata = {
       index: self.index,
-      name: self.path,
+      path: self.path,
       w: size[0],
       h: size[1],
     }
     open(metadata_path, 'w') do |io|
       io.write(@metadata.to_json)
     end
+  rescue
+    puts self.path
   end
 
   def create_thumbnail
@@ -63,7 +65,7 @@ class Aphrael::Image < Aphrael::Resource
     FileUtils.mkdir_p(File.dirname(thumbnail_path)) unless File.exist?(File.dirname(thumbnail_path))
 
     ImageScience.with_image(self.real_path) do |img|
-      img.cropped_thumbnail(76) do |thumb|
+      img.cropped_thumbnail(128) do |thumb|
         thumb.save thumbnail_path
       end
     end
