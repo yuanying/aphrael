@@ -11,10 +11,10 @@ module.exports = {
         filename: '[name].js',
         publicPath: '/js/'
     },
-    plugins: [
-        new webpack.optimize.OccurenceOrderPlugin(),
-        new webpack.NoErrorsPlugin()
-    ],
+    // plugins: [
+    //     new webpack.optimize.OccurenceOrderPlugin(),
+    //     new webpack.NoErrorsPlugin()
+    // ],
     module: {
         preLoaders: [{
             test: /\.js?$/,
@@ -36,7 +36,7 @@ module.exports = {
             test   : /\.less$/,
             loader : 'style!css!less'
         }, {
-            test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+            test: /\.(png|woff|woff2|eot|ttf|svg|gif)$/,
             loader: 'url?limit=100000'
         }],
         resolve: {

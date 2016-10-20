@@ -10,7 +10,8 @@ export default {
     let jsonPath = `.${current}/index.js`;
     return {
       index: m.request({
-        method: "GET",
+        dataType: "jsonp",
+        callbackName: "loadPage",
         url: jsonPath
       })
     }

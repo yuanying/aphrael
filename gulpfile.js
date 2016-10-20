@@ -2,27 +2,9 @@
 const gulp = require('gulp');
 const gutil = require('gulp-util');
 const eslint = require('gulp-eslint');
-const nodemon = require('gulp-nodemon');
 const config = require('./config');
 const webpackConfig = require('./webpack.config');
 const webpack = require('webpack');
-
-gulp.task('nodemon', () => {
-  nodemon({
-      script: './app/server/server.js',
-      ext: 'js',
-      watch: ['./app/server'],
-      env: { 'NODE_ENV': 'development' }
-  })
-});
-
-gulp.task('copy-to-example', ['webpack'], () => {
-  return gulp.src(
-    [ 'dist/*.html', 'dist/js/**', 'dist/images/**' ],
-    { base: 'dist' }
-  )
-  .pipe( gulp.dest( 'example' ) );
-});
 
 gulp.task('webpack', (callback) => {
     let myConfig = Object.create(webpackConfig);
@@ -43,7 +25,7 @@ gulp.task('lint', () => {
 });
 
 gulp.task('watch', () => {
-    gulp.watch('app/client/**/*', ['copy-to-example']);
+    gulp.watch('app/client/**/*', ['webpack']);
 });
 
-gulp.task('default', ['copy-to-example']);
+gulp.task('default', ['webpack']);
