@@ -1,4 +1,16 @@
 
+h1 {
+  font-size: 1.6em;
+  margin: 0 0.4em 0 0;
+}
+.breadcrumb {
+  margin-bottom: 0;
+}
+.breadcrumb .active {
+  color: #999;
+  text-decoration: none;
+}
+
 .text-overflow {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -18,4 +30,8 @@
 .dirs .dir {
   padding: 0.4em;
   text-align: center;
+}
+
+.dirs .dir img {
+  width: 100%
 }

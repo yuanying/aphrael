@@ -1,12 +1,15 @@
 
 require 'sinatra/base'
 
-CONFIG_PATH = ENV['APHRAEL_CONFIG'] || File.join(File.dirname(__FILE__), '..', '..', 'configs', 'config.yml')
-Aphrael::Resource.init(Aphrael::Config.new(CONFIG_PATH))
 
 class Aphrael::Server < Sinatra::Base
 
   set :public_folder, File.join(File.dirname(__FILE__), '..', '..', 'dist')
+
+  configure do
+    CONFIG_PATH = ENV['APHRAEL_CONFIG'] || File.join(File.dirname(__FILE__), '..', '..', 'configs', 'config.yml')
+    Aphrael::Resource.init(Aphrael::Config.new(CONFIG_PATH))
+  end
 
   configure :production do
     require 'sinatra-xsendfile'
@@ -27,7 +30,7 @@ class Aphrael::Server < Sinatra::Base
     return Aphrael::Resource.config
       .image_dirs
       .map
-      .with_index{|e, i| e.delete('path'); e['index'] = i; e }
+      .with_index{|e, i| e = e.dup; e.delete('path'); e['index'] = i; e }
       .to_json
   end
 
