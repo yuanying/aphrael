@@ -1,11 +1,11 @@
 
 class Aphrael::Resource
   def self.init config
-    @config = config
+    @@config = config
   end
 
   def self.config
-    @config
+    @@config
   end
 
   def self.directory? index, path
@@ -25,13 +25,13 @@ class Aphrael::Resource
   end
 
   def self.image_dir index
-    File.expand_path(self.config.image_dirs[index])
+    File.expand_path(self.config.image_dirs[index]['path'])
   end
 
   def initialize index, path, parent=nil
     @path   = path
     @index  = index.to_i
-    raise if File.expand_path(real_path).length < self.image_dir(index).length
+    raise if File.expand_path(real_path).length < self.class.image_dir(index).length
     @parent = parent if parent
   end
 

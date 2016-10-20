@@ -2,6 +2,7 @@ import m from 'mithril';
 import $ from 'jquery'
 import 'bootstrap';
 import Home from './views/home';
+import Index from './views/index';
 import NavBar from './views/navbar';
 import '../css/bootstrap.min.css';
 import '../css/main.css';
@@ -14,6 +15,7 @@ import '../css/main.css';
 m.route.mode = "hash";
 
 const home = m.component(Home);
+const index = m.component(Index)
 
 m.mount(document.getElementById('navbar'),
                                 m.component(NavBar, {
@@ -21,6 +23,7 @@ m.mount(document.getElementById('navbar'),
                                 }));
 
 m.route(document.getElementById('root'), '/', {
-    '/': home//,
-    // '/:index/:path..': dir
+    '/': home,
+    '/:index': index,
+    '/:index/:path...': index
 });

@@ -31,4 +31,11 @@ class Aphrael::Server < Sinatra::Base
       .to_json
   end
 
+  get '/api/dirs/:index/*' do |index, path|
+    directory = Aphrael::Directory.get(@index, path)
+    return directory.children
+      .map{|e| e.to_h }
+      .to_json
+  end
+
 end

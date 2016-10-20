@@ -3,22 +3,20 @@ import Dirs from './dirs'
 
 export default {
   controller: () => {
-    let current = m.route.param("path");
-    if (current != "") {
-      current = `/${current}`;
-    }
-    let jsonPath = `.${current}/index.js`;
+    let index = m.route.param("index");
+    let current = m.route.param("path") || "";
+
     return {
-      index: m.request({
-        dataType: "jsonp",
-        callbackName: "loadPage",
-        url: jsonPath
+      index: index,
+      dirs: m.request({
+        method: "GET",
+        url: `api/dirs/${index}/${current}`
       })
     }
   },
   view: (ctrl) => {
-    return m('.container-fluid', [
-      m.component(Dirs, { path: ctrl.index().path, dirs: ctrl.index().dirs })
-    ]);
+    return [
+      m.component(Dirs, { dirs: ctrl.dirs(), index: ctrl.index })
+    ];
   }
 };

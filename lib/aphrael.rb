@@ -9,4 +9,5 @@ end
 
 require 'aphrael/config'
 require 'aphrael/resource'
+require 'aphrael/directory'
 require 'aphrael/server'
