@@ -17,9 +17,10 @@ const home = m.component(Home);
 
 m.mount(document.getElementById('navbar'),
                                 m.component(NavBar, {
-                                    title: 'Mithril Study'
+                                    title: 'Aphrael'
                                 }));
 
 m.route(document.getElementById('root'), '/', {
-    '/:path...': home
+    '/': home//,
+    // '/:index/:path..': dir
 });

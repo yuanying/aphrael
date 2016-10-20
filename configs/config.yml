@@ -1,0 +1,8 @@
+
+image_dirs:
+  - path: /Users/yuanying/Pictures
+    name: My Pictures
+  - path: /Users/yuanying/Documents
+    name: My Documents
+
+tmp_dir: /Users/yuanying/.cache

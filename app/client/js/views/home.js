@@ -1,23 +1,24 @@
 import m from 'mithril';
-import Dirs from './dirs'
 
 export default {
   controller: () => {
-    let current = m.route.param("path");
-    if (current != "") {
-      current = `/${current}`;
-    }
-    let jsonPath = `.${current}/index.js`;
     return {
       index: m.request({
         method: "GET",
-        url: jsonPath
+        url: 'api/index'
       })
     }
   },
   view: (ctrl) => {
-    return m('.container-fluid', [
-      m.component(Dirs, { path: ctrl.index().path, dirs: ctrl.index().dirs })
-    ]);
+    return m('.container-fluid',
+      m('.row.indexes',
+        ctrl.index().map(function(index) {
+          return m('a', { href: `/${index.index}/`, config: m.route }, m('.col-xs-12.index', [
+            m('img', { src: 'images/folder.png' }),
+            index.name
+          ]));
+        })
+      )
+    );
   }
 };

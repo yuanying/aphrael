@@ -4,6 +4,8 @@ example/images
 example/js
 example/*.html
 
+.DS_Store
+
 ### Linux ###
 *~
 

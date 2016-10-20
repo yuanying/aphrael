@@ -5,3 +5,13 @@
         -ms-box-sizing: border-box;
             box-sizing: border-box;
 }
+
+.index {
+  border-bottom: 1px solid #ccc;
+  padding: 1em;
+}
+.indexes .index img {
+  witdh: 42px;
+  height: 33px;
+  margin-right: 1em;
+}
