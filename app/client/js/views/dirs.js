@@ -8,7 +8,7 @@ export default {
         return `api/thumbs/${args.index}/${dir.path}`;
       },
       dirUrl: (dir) => {
-        return `/${args.index}/${dir.path}`;
+        return `/#/${args.index}/${dir.path}`;
       }
     }
   },
@@ -27,7 +27,8 @@ export default {
             }
           }
         }
-        return m('a', { href: ctrl.dirUrl(dir), config: m.route }, [
+        //return m('a', { href: ctrl.dirUrl(dir), config: m.route }, [
+        return m('a', { href: ctrl.dirUrl(dir) }, [
           m('.col-xs-6.col-sm-4.col-md-3.col-lg-2.dir', [
             m('div', m('img.img-responsive.img-thumbnail', attr)),
             m('div.text-overflow', decodeURI(dir.name))
