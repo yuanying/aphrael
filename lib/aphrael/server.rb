@@ -23,6 +23,20 @@ class Aphrael::Server < Sinatra::Base
     register Sinatra::Reloader
   end
 
+  helpers do
+    def thumbnail_image directory
+      if file = Aphrael::Image.images(directory, 1)[0]
+        return file
+      else
+        if directory = directory.children[0]
+          return thumbnail_image(directory)
+        else
+          return nil
+        end
+      end
+    end
+  end
+
   get '/' do
     open( File.join(File.dirname(__FILE__), '..', '..', 'dist', 'index.html') ) do |io|
       io.read
@@ -57,7 +71,7 @@ class Aphrael::Server < Sinatra::Base
     index = index.to_i
     if Aphrael::Resource.directory?(index, path)
       directory = Aphrael::Directory.get(index, path)
-      file = Aphrael::Image.images(directory, 1)[0]
+      file = thumbnail_image(directory)
     else
       file = Aphrael::Image.get(index, path)
     end
