@@ -1,7 +1,6 @@
 
 require 'sinatra/base'
 
-
 class Aphrael::Server < Sinatra::Base
 
   set :static, true
@@ -37,6 +36,7 @@ class Aphrael::Server < Sinatra::Base
   end
 
   get '/api/dirs/:index/*' do |index, path|
+    index = index.to_i
     directory = Aphrael::Directory.get(index, path)
     return directory.children
       .map{|e| e.to_h }
@@ -44,6 +44,7 @@ class Aphrael::Server < Sinatra::Base
   end
 
   get '/api/images/:index/*' do |index, path|
+    index = index.to_i
     directory = Aphrael::Directory.get(index, path)
     Aphrael::Image.images(directory)
       .map{|e| e.metadata }
@@ -51,12 +52,24 @@ class Aphrael::Server < Sinatra::Base
   end
 
   get '/thumbs/:index/*' do |index, path|
-    image = Aphrael::Image.get(index, path)
-    image.create_thumbnail
-    send_file image.thumbnail_path.to_s
+    index = index.to_i
+    if Aphrael::Resource.directory?(index, path)
+      directory = Aphrael::Directory.get(index, path)
+      file = Aphrael::Image.images(directory, 1)[0]
+    else
+      file = Aphrael::Image.get(index, path)
+    end
+    if file
+      file.create_thumbnail
+      send_file file.thumbnail_path.to_s
+    else
+      status 404
+      ''
+    end
   end
 
   get '/images/:index/*' do |index, path|
+    index = index.to_i
     image = Aphrael::Image.get(index, path)
     send_file image.real_path.to_s
   end

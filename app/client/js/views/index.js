@@ -7,6 +7,7 @@ export default {
   controller: () => {
     let index = m.route.param("index");
     let current = m.route.param("path") || "";
+    current = current.split('&')[0];
     let paths = current.split('/');
     if (paths[0] === "") {
       paths = [];
