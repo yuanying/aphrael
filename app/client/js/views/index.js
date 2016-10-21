@@ -4,7 +4,7 @@ import Images from './images'
 import Breadcrumbs from './breadcrumbs'
 
 export default {
-  controller: () => {
+  controller: (args) => {
     let index = m.route.param("index");
     let current = m.route.param("path") || "";
     current = current.split('&')[0];
@@ -26,9 +26,9 @@ export default {
       })
     }
   },
-  view: (ctrl) => {
+  view: (ctrl, args) => {
     return [
-      m.component(Breadcrumbs, { index: ctrl.index, paths: ctrl.paths}),
+      m.component(Breadcrumbs, { index: ctrl.index, paths: ctrl.paths, targets: args.targets }),
       m.component(Dirs, { dirs: ctrl.dirs(), index: ctrl.index }),
       m.component(Images, { images: ctrl.images(), index: ctrl.index })
     ];

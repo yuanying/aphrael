@@ -20,8 +20,9 @@ export default {
     }
   },
   view: (ctrl, args) => {
+    let index = parseInt(args.index);
     let breadcrumbs = [
-      ctrl.linkTo([], 'Home')
+      ctrl.linkTo([], args.targets()[index].name)
     ];
     for(let i=0; i<args.paths.length; i++) {
       let path = args.paths.slice(0, i+1);
