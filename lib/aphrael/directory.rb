@@ -24,7 +24,7 @@ class Aphrael::Directory < Aphrael::Resource
   def create_index
     unless defined?(@children)
       @children = []
-      Dir.foreach(real_path) do |file|
+      Dir.entries(real_path).sort.each do |file|
         next if file.start_with?('.')
         real_file_path = File.join(real_path, file)
         if File.directory?(real_file_path)
@@ -33,8 +33,8 @@ class Aphrael::Directory < Aphrael::Resource
           @children << self.class.get(index, File.join(*_path))
         end
       end
-      @children.sort!
     end
+    @children
   end
 
   def to_h

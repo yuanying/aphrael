@@ -9,7 +9,7 @@ class Aphrael::Image < Aphrael::Resource
     images = []
     real_path = directory.real_path
 
-    Dir.foreach(real_path) do |file|
+    Dir.entries(real_path).sort.each do |file|
       next if file.start_with?('.')
       if length && images.size >= length
         break
@@ -19,7 +19,7 @@ class Aphrael::Image < Aphrael::Resource
         images << self.get(directory.index, File.join(directory.path, file))
       end
     end
-    return images.sort
+    return images
   end
 
   def self.get index, path
