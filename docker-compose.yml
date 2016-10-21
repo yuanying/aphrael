@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  web:
+    image: nginx
+    depends_on:
+      - app
+    ports:
+      - "9000:80"
+    volumes:
+      - "/Users/yuanying/Documents:/Users/yuanying/Documents"
+      - "/Users/yuanying/Downloads:/Users/yuanying/Downloads"
+      - "/Users/yuanying/Pictures:/Users/yuanying/Pictures"
+      - "/Users/yuanying/.cache:/Users/yuanying/.cache"
+      - "./nginx:/etc/nginx"
+  app:
+    image: yuanying/aphrael
+    command: bundle exec rackup -o 0.0.0.0
+    ports:
+      - "9292:9292"
+    volumes:
+      - "/Users/yuanying/Documents:/Users/yuanying/Documents"
+      - "/Users/yuanying/Downloads:/Users/yuanying/Downloads"
+      - "/Users/yuanying/Pictures:/Users/yuanying/Pictures"
+      - "/Users/yuanying/.cache:/Users/yuanying/.cache"
+    environment:
+      - "RACK_ENV=production"

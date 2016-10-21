@@ -5,10 +5,10 @@ import PhotoSwipeUI_Default from 'photoswipe/dist/photoswipe-ui-default';
 export default {
   controller: (args) => {
     let imageUrl = (image) => {
-      return `images/${args.index}/${image.path}`;
+      return `api/image/${args.index}/${image.path}`;
     };
     let thumbUrl = (image) => {
-      return `thumbs/${args.index}/${image.path}`;
+      return `api/thumbs/${args.index}/${image.path}`;
     };
     let images = args.images.map((image, index) => {
       image['src'] = imageUrl(image);

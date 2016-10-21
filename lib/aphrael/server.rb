@@ -3,8 +3,8 @@ require 'sinatra/base'
 
 class Aphrael::Server < Sinatra::Base
 
-  set :static, true
-  set :public_folder, File.join(File.dirname(__FILE__), '..', '..', 'dist')
+  set :static, false
+  # set :public_folder, File.join(File.dirname(__FILE__), '..', '..', 'dist')
 
   configure do
     CONFIG_PATH = ENV['APHRAEL_CONFIG'] || File.join(File.dirname(__FILE__), '..', '..', 'configs', 'config.yml')
@@ -12,7 +12,7 @@ class Aphrael::Server < Sinatra::Base
   end
 
   configure :production do
-    require 'sinatra-xsendfile'
+    require 'sinatra/xsendfile'
     helpers Sinatra::Xsendfile
     Sinatra::Xsendfile.replace_send_file!
     set :xsf_header, 'X-Accel-Redirect'
@@ -24,7 +24,9 @@ class Aphrael::Server < Sinatra::Base
   end
 
   get '/' do
-    send_file File.join(settings.public_folder, 'index.html')
+    open( File.join(File.dirname(__FILE__), '..', '..', 'dist', 'index.html') ) do |io|
+      io.read
+    end
   end
 
   get '/api/index' do
@@ -51,7 +53,7 @@ class Aphrael::Server < Sinatra::Base
       .to_json
   end
 
-  get '/thumbs/:index/*' do |index, path|
+  get '/api/thumbs/:index/*' do |index, path|
     index = index.to_i
     if Aphrael::Resource.directory?(index, path)
       directory = Aphrael::Directory.get(index, path)
@@ -68,7 +70,7 @@ class Aphrael::Server < Sinatra::Base
     end
   end
 
-  get '/images/:index/*' do |index, path|
+  get '/api/image/:index/*' do |index, path|
     index = index.to_i
     image = Aphrael::Image.get(index, path)
     send_file image.real_path.to_s
