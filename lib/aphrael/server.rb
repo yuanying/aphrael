@@ -90,4 +90,10 @@ class Aphrael::Server < Sinatra::Base
     send_file image.real_path.to_s
   end
 
+  get '/api/movie/:index/*' do |index, path|
+    index = index.to_i
+    image = Aphrael::Image.get(index, path)
+    send_file image.movie_real_path.to_s
+  end
+
 end

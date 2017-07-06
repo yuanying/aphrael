@@ -53,6 +53,9 @@ class Aphrael::Image < Aphrael::Resource
       w: size[0],
       h: size[1],
     }
+    if self.has_movie?
+      @metadata[:movie] = true
+    end
     open(metadata_path, 'w') do |io|
       io.write(@metadata.to_json)
     end
@@ -72,6 +75,21 @@ class Aphrael::Image < Aphrael::Resource
     end
   rescue
     puts "Cannot create thumbnail: #{path}"
+  end
+
+  def has_movie?
+    File.file?(self.movie_real_path)
+  end
+
+  def movie_path
+    dirname = File.dirname(self.path)
+    basename = File.basename(self.path, '.*')
+
+    "#{dirname}/#{basename}.mp4"
+  end
+
+  def movie_real_path
+    self.class.real_path(index, movie_path)
   end
 
   def thumbnail_path
