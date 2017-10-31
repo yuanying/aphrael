@@ -13,8 +13,10 @@ services:
       - "/Users/yuanying/Pictures:/Users/yuanying/Pictures"
       - "/Users/yuanying/.cache:/Users/yuanying/.cache"
       - "./nginx:/etc/nginx"
+    environment:
+      - "LANG=C.UTF-8"
   app:
-    image: yuanying/aphrael
+    image: yuanying/aphrael:dev
     command: bundle exec rackup -o 0.0.0.0
     ports:
       - "9292:9292"
@@ -25,3 +27,4 @@ services:
       - "/Users/yuanying/.cache:/Users/yuanying/.cache"
     environment:
       - "RACK_ENV=production"
+      - "LANG=C.UTF-8"

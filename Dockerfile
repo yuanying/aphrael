@@ -1,6 +1,6 @@
-FROM ruby:2.3-onbuild
+FROM ruby:2.4-onbuild
 MAINTAINER O. Yuanying "yuan-docker@fraction.jp"
 
 RUN apt-get update && apt-get install -y libfreeimage-dev
 EXPOSE 9292
-CMD ['bundle', 'exec', 'rackup', '-o', '0.0.0.0']
+CMD ["bundle", "exec", "rackup", "-o", "0.0.0.0"]

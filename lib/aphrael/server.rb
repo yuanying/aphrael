@@ -52,6 +52,7 @@ class Aphrael::Server < Sinatra::Base
   end
 
   get '/api/dirs/:index/*' do |index, path|
+    path = path.force_encoding(Encoding::UTF_8)
     index = index.to_i
     directory = Aphrael::Directory.get(index, path)
     return directory.children
@@ -60,6 +61,7 @@ class Aphrael::Server < Sinatra::Base
   end
 
   get '/api/images/:index/*' do |index, path|
+    path = path.force_encoding(Encoding::UTF_8)
     index = index.to_i
     directory = Aphrael::Directory.get(index, path)
     Aphrael::Image.images(directory)
@@ -68,6 +70,7 @@ class Aphrael::Server < Sinatra::Base
   end
 
   get '/api/thumbs/:index/*' do |index, path|
+    path = path.force_encoding(Encoding::UTF_8)
     index = index.to_i
     if Aphrael::Resource.directory?(index, path)
       directory = Aphrael::Directory.get(index, path)
@@ -85,12 +88,14 @@ class Aphrael::Server < Sinatra::Base
   end
 
   get '/api/image/:index/*' do |index, path|
+    path = path.force_encoding(Encoding::UTF_8)
     index = index.to_i
     image = Aphrael::Image.get(index, path)
     send_file image.real_path.to_s
   end
 
   get '/api/movie/:index/*' do |index, path|
+    path = path.force_encoding(Encoding::UTF_8)
     index = index.to_i
     image = Aphrael::Image.get(index, path)
     send_file image.movie_real_path.to_s
