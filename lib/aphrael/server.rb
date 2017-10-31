@@ -25,7 +25,7 @@ class Aphrael::Server < Sinatra::Base
 
   helpers do
     def thumbnail_image directory
-      if file = Aphrael::Image.images(directory, 1)[0]
+      if file = directory.images(1)[0]
         return file
       else
         if directory = directory.children[0]
@@ -55,18 +55,12 @@ class Aphrael::Server < Sinatra::Base
     path = path.force_encoding(Encoding::UTF_8)
     index = index.to_i
     directory = Aphrael::Directory.get(index, path)
-    return directory.children
-      .map{|e| e.to_h }
-      .to_json
-  end
-
-  get '/api/images/:index/*' do |index, path|
-    path = path.force_encoding(Encoding::UTF_8)
-    index = index.to_i
-    directory = Aphrael::Directory.get(index, path)
-    Aphrael::Image.images(directory)
-      .map{|e| e.metadata }
-      .to_json
+    children = directory.children.map{|e| e.to_h }
+    images = directory.images.map{|e| e.metadata }
+    return {
+      dirs: children,
+      images: images,
+    }.to_json
   end
 
   get '/api/thumbs/:index/*' do |index, path|

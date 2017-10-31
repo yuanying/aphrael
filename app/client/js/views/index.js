@@ -19,18 +19,14 @@ export default {
       dirs: m.request({
         method: "GET",
         url: `api/dirs/${index}/${current}`
-      }),
-      images: m.request({
-        method: "GET",
-        url: `api/images/${index}/${current}`
       })
     }
   },
   view: (ctrl, args) => {
     return [
       m.component(Breadcrumbs, { index: ctrl.index, paths: ctrl.paths, targets: args.targets }),
-      m.component(Dirs, { dirs: ctrl.dirs(), index: ctrl.index }),
-      m.component(Images, { images: ctrl.images(), index: ctrl.index })
+      m.component(Dirs, { dirs: ctrl.dirs().dirs, index: ctrl.index }),
+      m.component(Images, { images: ctrl.dirs().images, index: ctrl.index })
     ];
   }
 };

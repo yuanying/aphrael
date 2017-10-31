@@ -5,23 +5,6 @@ class Aphrael::Image < Aphrael::Resource
 
   SUPPORTED_FORMATS = ['.png', '.PNG', '.jpg', '.JPG', '.jpeg']
 
-  def self.images directory, length=nil
-    images = []
-    real_path = directory.real_path
-
-    Dir.entries(real_path).sort.each do |file|
-      next if file.start_with?('.')
-      if length && images.size >= length
-        break
-      end
-      real_file_path = File.join(real_path, file)
-      if File.file?(real_file_path) && SUPPORTED_FORMATS.include?(File.extname(real_file_path))
-        images << self.get(directory.index, File.join(directory.path, file))
-      end
-    end
-    return images
-  end
-
   def self.get index, path
     @cache ||= {}
     real_path = Aphrael::Resource.real_path(index, path)
