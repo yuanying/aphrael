@@ -1,4 +1,4 @@
-FROM ruby:2.4-onbuild
+FROM ruby:2.4.4-slim
 MAINTAINER O. Yuanying "yuan-docker@fraction.jp"
 
 RUN apt-get update && apt-get install -y libfreeimage-dev
