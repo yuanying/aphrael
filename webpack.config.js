@@ -2,7 +2,6 @@
 const webpack = require('webpack');
 const path = require('path');
 module.exports = {
-    devtool: 'eval-source-map',
     entry: [
         path.join(__dirname, 'app/client/js/main.js')
     ],
@@ -11,39 +10,46 @@ module.exports = {
         filename: '[name].js',
         publicPath: '/js/'
     },
-    // plugins: [
-    //     new webpack.optimize.OccurenceOrderPlugin(),
-    //     new webpack.NoErrorsPlugin()
-    // ],
+    mode: 'production',
     module: {
-        preLoaders: [{
+        rules: [{
+            test: /\.js?$/,
+            enforce: "pre",
+            exclude: /node_modules/,
+            use: [{
+                loader: "eslint-loader"
+            }]
+        }, {
             test: /\.js?$/,
             exclude: /node_modules/,
-            loader: "eslint"
-        }],
-
-        loaders: [{
-            test: /\.js?$/,
-            exclude: /node_modules/,
-            loader: 'babel'
+            use:[{
+                loader: 'babel-loader',
+                options: {
+                    presets: ["@babel/preset-env"]
+                }
+            }]
         }, {
             test: /bootstrap\/js\//,
-            loader: 'imports?jQuery=jquery'
+            use:[{
+                loader: 'imports-loader',
+                options:{
+                    jQuery: 'jquery'
+                }
+            }]
         }, {
             test   : /\.css$/,
-            loader : 'style!css'
+            use: [
+                "style-loader",
+                "css-loader"
+            ]
         }, {
-            test   : /\.less$/,
-            loader : 'style!css!less'
-        }, {
-            test: /\.(png|woff|woff2|eot|ttf|svg|gif)$/,
-            loader: 'url?limit=100000'
-        }],
-        resolve: {
-            extensions: ['', '.js']
-        }
-    },
-    eslint: {
-        configFile: '.eslintrc'
-    },
+            test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+            use: [{
+                loader: "url-loader",
+                options: {
+                    limit: "100000"
+                }
+            }]
+        }]
+    }
 };

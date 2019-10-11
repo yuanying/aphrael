@@ -3,7 +3,7 @@ require 'fastimage'
 
 class Aphrael::Image < Aphrael::Resource
 
-  SUPPORTED_FORMATS = ['.png', '.PNG', '.jpg', '.JPG', '.jpeg']
+  SUPPORTED_FORMATS = ['.png', '.PNG', '.jpg', '.JPG', '.jpeg', '.gif', '.GIF']
 
   def self.get index, path
     @cache ||= {}
@@ -56,8 +56,11 @@ class Aphrael::Image < Aphrael::Resource
         thumb.save thumbnail_path
       end
     end
-  rescue
+  rescue => ex
+    require 'pp'
+    pp ex
     puts "Cannot create thumbnail: #{path}"
+    FileUtils.rm_f(thumbnail_path) if File.exist?(thumbnail_path)
   end
 
   def has_movie?
