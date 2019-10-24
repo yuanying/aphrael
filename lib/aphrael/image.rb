@@ -1,5 +1,4 @@
-require 'image_science'
-require 'fastimage'
+require 'mini_magick'
 
 class Aphrael::Image < Aphrael::Resource
 
@@ -21,6 +20,15 @@ class Aphrael::Image < Aphrael::Resource
 
   attr_reader :metadata
 
+  def image
+    unless @image
+      open(self.real_path) do |io|
+        @image = MiniMagick::Image.read(io.read)
+      end
+    end
+    @image
+  end
+
   def create_metadata
     if File.exist?(metadata_path)
       open(metadata_path) do |io|
@@ -30,11 +38,10 @@ class Aphrael::Image < Aphrael::Resource
     end
     FileUtils.mkdir_p(File.dirname(metadata_path)) unless File.exist?(File.dirname(metadata_path))
 
-    size = ::FastImage.size(self.real_path)
     @metadata = {
       path: self.path,
-      w: size[0],
-      h: size[1],
+      w: image[:width],
+      h: image[:height],
     }
     if self.has_movie?
       @metadata[:movie] = true
@@ -51,11 +58,23 @@ class Aphrael::Image < Aphrael::Resource
 
     FileUtils.mkdir_p(File.dirname(thumbnail_path)) unless File.exist?(File.dirname(thumbnail_path))
 
-    ImageScience.with_image(self.real_path) do |img|
-      img.cropped_thumbnail(128) do |thumb|
-        thumb.save thumbnail_path
-      end
+    if image.mime_type.match /gif/
+      _image = image.collapse!
+    else
+      _image = image
     end
+    _image = image
+    narrow = _image[:width] > _image[:height] ? _image[:height] : _image[:width]
+    _image.combine_options do |c|
+      c.gravity "center"
+      if _image.mime_type.match /gif/
+        c.crop "#{narrow}x#{narrow}+0+0!"
+      else
+        c.crop "#{narrow}x#{narrow}+0+0"
+      end
+     end
+    #  _image.resize "#{128}x#{128}"
+     _image.write(thumbnail_path)
   rescue => ex
     require 'pp'
     pp ex
