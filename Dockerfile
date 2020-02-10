@@ -1,3 +1,12 @@
+FROM node:12 as js_builder
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
 FROM ruby:2.5.5-alpine as builder
 
 RUN apk --update add --virtual build-dependencies \
@@ -35,6 +44,7 @@ ENV APP_HOME /myapp
 RUN mkdir -p $APP_HOME
 WORKDIR $APP_HOME
 COPY . $APP_HOME
+COPY --from=js_builder /usr/src/app/dist/js $APP_HOME/dist/js
 
 EXPOSE 9292
 CMD ["bundle", "exec", "rackup", "-o", "0.0.0.0"]
