@@ -17,7 +17,7 @@
     "eslint-loader": "^3.0.2",
     "file-loader": "^4.2.0",
     "imports-loader": "^0.8.0",
-    "jquery": "^3.1.1",
+    "jquery": "^3.5.0",
     "jquery.photoswipe": "^1.0.7",
     "mithril": "^0.2.5",
     "photoswipe": "^4.1.1",
