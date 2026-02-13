@@ -3736,9 +3736,8 @@ This function can be used only in the GUI.
 ''')
 
     def evaluate(self, formatter, kwargs, mi, locals, html):
-        from qt.core import QDialog, QVBoxLayout
-
         from calibre.gui2.widgets2 import Dialog, HTMLDisplay
+        from qt.core import QDialog, QVBoxLayout
 
         class HTMLDialog(Dialog):
 

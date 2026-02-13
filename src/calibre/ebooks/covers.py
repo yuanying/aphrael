@@ -13,6 +13,15 @@ from contextlib import contextmanager
 from itertools import chain
 from math import atan2, ceil, cos, sin, sqrt
 
+from calibre import fit_image, force_unicode
+from calibre.constants import __appname__, __version__
+from calibre.ebooks.metadata import fmt_sidx
+from calibre.ebooks.metadata.book.base import Metadata
+from calibre.ebooks.metadata.book.formatter import SafeFormat
+from calibre.gui2 import config, ensure_app, load_builtin_fonts, pixmap_to_data
+from calibre.utils.cleantext import clean_ascii_chars, clean_xml_chars
+from calibre.utils.config import JSONConfig
+from calibre.utils.resources import get_image_path as I
 from qt.core import (
     QBrush,
     QColor,
@@ -33,16 +42,6 @@ from qt.core import (
     QTextOption,
     QTransform,
 )
-
-from calibre import fit_image, force_unicode
-from calibre.constants import __appname__, __version__
-from calibre.ebooks.metadata import fmt_sidx
-from calibre.ebooks.metadata.book.base import Metadata
-from calibre.ebooks.metadata.book.formatter import SafeFormat
-from calibre.gui2 import config, ensure_app, load_builtin_fonts, pixmap_to_data
-from calibre.utils.cleantext import clean_ascii_chars, clean_xml_chars
-from calibre.utils.config import JSONConfig
-from calibre.utils.resources import get_image_path as I
 
 # Default settings {{{
 cprefs = JSONConfig('cover_generation')
@@ -742,9 +741,8 @@ def generate_masthead(title, output_path=None, width=600, height=60, as_qimage=F
 
 
 def test(scale=0.25):
-    from qt.core import QGridLayout, QLabel, QMainWindow, QPixmap, QScrollArea, QWidget
-
     from calibre.gui2 import Application
+    from qt.core import QGridLayout, QLabel, QMainWindow, QPixmap, QScrollArea, QWidget
     app = Application([])
     mi = Metadata('Unknown', ['Kovid Goyal', 'John & Doe', 'Author'])
     mi.series = 'A series & styles'
