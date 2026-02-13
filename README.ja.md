@@ -36,14 +36,19 @@ aphrael --version
 基本構文:
 
 ```bash
-aphrael <入力ファイル> <出力ファイル> [オプション]
+aphrael <入力ファイル> [出力ファイル] [オプション]
 ```
 
-出力フォーマットは出力ファイルの拡張子から自動判定されます。
+出力ファイルを省略した場合、入力ファイルと同じディレクトリに AZW3 (KF8) 形式の `.mobi` ファイルがデフォルト生成されます。Kindle Paperwhite は `.mobi` ファイルの内部フォーマットを自動判別するため、追加の引数なしで Kindle 向けの最適な出力が得られます。
+
+出力ファイルを指定した場合は、その拡張子から出力フォーマットが自動判定されます。
 
 ### 変換例
 
 ```bash
+# デフォルト出力: book.mobi (AZW3/KF8 形式) を Kindle 向けに生成
+aphrael book.epub
+
 # EPUB → MOBI
 aphrael book.epub book.mobi
 

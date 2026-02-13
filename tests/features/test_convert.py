@@ -30,6 +30,11 @@ def test_convert_mobi_to_epub():
     pass
 
 
+@scenario('convert.feature', 'Convert EPUB with default output (no output file specified)')
+def test_convert_epub_default_output():
+    pass
+
+
 @scenario('convert.feature', 'Show help message')
 def test_show_help():
     pass
@@ -121,6 +126,24 @@ def when_convert_mobi_to_format(conversion_context, output_format):
     return {'returncode': result.returncode, 'stdout': result.stdout, 'stderr': result.stderr}
 
 
+@when('I convert it without specifying an output file', target_fixture='cli_result')
+def when_convert_without_output(conversion_context):
+    input_file = conversion_context['input_file']
+    # Copy input to tmpdir so default output goes there
+    tmp_input = os.path.join(conversion_context['tmpdir'], os.path.basename(input_file))
+    shutil.copy2(input_file, tmp_input)
+    conversion_context['tmp_input'] = tmp_input
+    base = os.path.splitext(os.path.basename(input_file))[0]
+    conversion_context['default_output'] = os.path.join(
+        conversion_context['tmpdir'], f'{base}.mobi',
+    )
+    result = subprocess.run(
+        [sys.executable, '-m', 'calibre.ebooks.conversion.cli', tmp_input],
+        capture_output=True, text=True, timeout=120,
+    )
+    return {'returncode': result.returncode, 'stdout': result.stdout, 'stderr': result.stderr}
+
+
 @when(parsers.parse('I run aphrael with "{args}"'), target_fixture='cli_result')
 def when_run_with_args(args):
     result = subprocess.run(
@@ -164,6 +187,46 @@ def then_valid_output(conversion_context, output_format):
             assert header[60:68] == b'BOOKMOBI', (
                 f'Not a valid MOBI/AZW3 file (missing BOOKMOBI magic): {header[60:68]!r}'
             )
+
+
+@then(parsers.parse('the default output file should be created with "{ext}" extension'))
+def then_default_output_created(conversion_context, cli_result, ext):
+    assert cli_result['returncode'] == 0, (
+        f'Conversion failed (exit code {cli_result["returncode"]}):\n'
+        f'stdout: {cli_result["stdout"][-500:]}\n'
+        f'stderr: {cli_result["stderr"][-500:]}'
+    )
+    output_file = conversion_context['default_output']
+    assert output_file.endswith(ext), f'Expected {ext} extension, got: {output_file}'
+    assert os.path.exists(output_file), f'Default output file not found: {output_file}'
+    assert os.path.getsize(output_file) > 0, f'Default output file is empty: {output_file}'
+
+
+@then('the default output file should be a valid AZW3 (KF8) file')
+def then_default_output_is_kf8(conversion_context):
+    output_file = conversion_context['default_output']
+    with open(output_file, 'rb') as f:
+        header = f.read(68)
+        assert header[60:68] == b'BOOKMOBI', (
+            f'Not a valid MOBI/AZW3 file (missing BOOKMOBI magic): {header[60:68]!r}'
+        )
+    # Check KF8 format: MOBI header version should be 8
+    with open(output_file, 'rb') as f:
+        # PalmDB header: first record offset at byte 78 (after 76 byte header + 2 byte gap)
+        # Actually, let's read the number of records and find the first record
+        f.seek(76)
+        num_records = int.from_bytes(f.read(2), 'big')
+        assert num_records > 0, 'No records in PalmDB'
+        # First record entry: 8 bytes (4 offset + 4 attributes)
+        first_record_offset = int.from_bytes(f.read(4), 'big')
+        # MOBI header starts at first_record_offset
+        # PalmDOC header: 16 bytes, then MOBI header
+        # MOBI header version is at offset 36 from start of first record
+        f.seek(first_record_offset + 36)
+        mobi_version = int.from_bytes(f.read(4), 'big')
+        assert mobi_version == 8, (
+            f'Expected MOBI version 8 (KF8/AZW3), got version {mobi_version}'
+        )
 
 
 @then('it should display usage information')

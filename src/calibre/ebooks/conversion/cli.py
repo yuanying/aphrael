@@ -19,12 +19,13 @@ from calibre.utils.config import OptionParser
 from calibre.utils.logging import Log
 
 USAGE = '%prog ' + _('''\
-input_file output_file [options]
+input_file [output_file] [options]
 
 Convert an e-book from one format to another.
 
-input_file is the input and output_file is the output. Both must be \
-specified as the first two arguments to the command.
+input_file is the input and output_file is the output. If output_file is \
+omitted, the output defaults to an AZW3 (KF8) file with a .mobi extension \
+in the same directory as the input file, suitable for Kindle devices.
 
 The output e-book format is guessed from the file extension of \
 output_file. output_file can also be of the special format .EXT where \
@@ -59,9 +60,9 @@ def print_help(parser, log):
 
 
 def check_command_line_options(parser, args, log):
-    if len(args) < 3 or args[1].startswith('-') or args[2].startswith('-'):
+    if len(args) < 2 or args[1].startswith('-'):
         print_help(parser, log)
-        log.error('\n\nYou must specify the input AND output files')
+        log.error('\n\nYou must specify the input file')
         raise SystemExit(1)
 
     input = os.path.abspath(args[1])
@@ -72,13 +73,20 @@ def check_command_line_options(parser, args, log):
     if input.endswith('.recipe') and not os.access(input, os.R_OK):
         input = args[1]
 
-    output = args[2]
-    if (output.startswith('.') and output[:2] not in {'..', '.'} and '/' not in
-            output and '\\' not in output):
-        output = os.path.splitext(os.path.basename(input))[0]+output
-    output = os.path.abspath(output)
+    output_fmt_override = None
+    if len(args) < 3 or args[2].startswith('-'):
+        # No output file specified: default to .mobi with AZW3 (KF8) format
+        base = os.path.splitext(os.path.basename(input))[0]
+        output = os.path.join(os.path.dirname(input), base + '.mobi')
+        output_fmt_override = 'azw3'
+    else:
+        output = args[2]
+        if (output.startswith('.') and output[:2] not in {'..', '.'} and '/' not in
+                output and '\\' not in output):
+            output = os.path.splitext(os.path.basename(input))[0]+output
+        output = os.path.abspath(output)
 
-    return input, output
+    return input, output, output_fmt_override
 
 
 def option_recommendation_to_cli_option(add_option, rec):
@@ -313,14 +321,14 @@ def create_option_parser(args, log):
         raise SystemExit(0)
 
     parser = option_parser()
-    if len(args) < 3:
+    if len(args) < 2:
         print_help(parser, log)
         if any(x in args for x in ('-h', '--help')):
             raise SystemExit(0)
         else:
             raise SystemExit(1)
 
-    input, output = check_command_line_options(parser, args, log)
+    input, output, output_fmt_override = check_command_line_options(parser, args, log)
 
     from calibre.ebooks.conversion.plumber import Plumber
 
@@ -328,7 +336,8 @@ def create_option_parser(args, log):
     if patheq(input, output):
         raise ValueError('Input file is the same as the output file')
 
-    plumber = Plumber(input, output, log, reporter)
+    plumber = Plumber(input, output, log, reporter,
+                      output_fmt_override=output_fmt_override)
     add_input_output_options(parser, plumber)
     add_pipeline_options(parser, plumber)
 
@@ -377,8 +386,10 @@ def main(args=sys.argv):
     log = Log()
     parser, plumber = create_option_parser(args, log)
     opts, leftover_args = parser.parse_args(args)
-    if len(leftover_args) > 3:
-        log.error('Extra arguments not understood:', ', '.join(leftover_args[3:]))
+    max_positional = 3 if plumber.output_fmt_override is None else 2
+    if len(leftover_args) > max_positional:
+        log.error('Extra arguments not understood:',
+                  ', '.join(leftover_args[max_positional:]))
         return 1
     for x in ('read_metadata_from_opf', 'cover'):
         if getattr(opts, x, None) is not None:
