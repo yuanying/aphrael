@@ -16,6 +16,25 @@ Unnecessary modules (GUI, device integration, etc.) have been removed and C exte
 
 - Python 3.10+
 - [uv](https://docs.astral.sh/uv/) (recommended)
+- System libraries: `libxml2-dev`, `libxslt1-dev` (required to build `lxml` and `html5-parser` when pre-built wheels are not available)
+
+On Debian/Ubuntu:
+
+```bash
+sudo apt install libxml2-dev libxslt1-dev
+```
+
+On Fedora/RHEL:
+
+```bash
+sudo dnf install libxml2-devel libxslt-devel
+```
+
+On macOS (Homebrew):
+
+```bash
+brew install libxml2 libxslt
+```
 
 ## Installation
 
