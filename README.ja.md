@@ -16,6 +16,25 @@ GUI やデバイス連携などの不要モジュールを除去し、C 拡張�
 
 - Python 3.10 以上
 - [uv](https://docs.astral.sh/uv/) (推奨)
+- システムライブラリ: `libxml2-dev`, `libxslt1-dev`（ビルド済みホイールが利用できない環境で `lxml` / `html5-parser` のビルドに必要）
+
+Debian/Ubuntu:
+
+```bash
+sudo apt install libxml2-dev libxslt1-dev
+```
+
+Fedora/RHEL:
+
+```bash
+sudo dnf install libxml2-devel libxslt-devel
+```
+
+macOS (Homebrew):
+
+```bash
+brew install libxml2 libxslt
+```
 
 ## インストール
 
