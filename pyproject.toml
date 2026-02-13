@@ -1,5 +1,5 @@
 [project]
-name = "ebook-converter"
+name = "aphrael"
 version = "0.1.0"
 description = "Standalone ebook converter for EPUB/MOBI/AZW3, extracted from calibre"
 readme = "README.md"
@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.scripts]
-ebook-convert = "calibre.ebooks.conversion.cli:main"
+aphrael = "calibre.ebooks.conversion.cli:main"
 
 [build-system]
 requires = ["hatchling"]
