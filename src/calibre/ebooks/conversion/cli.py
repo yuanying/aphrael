@@ -286,7 +286,7 @@ def option_parser():
     parser = OptionParser(usage=USAGE)
     parser.add_option('--list-recipes', default=False, action='store_true',
             help=_('List builtin recipe names. You can create an e-book from '
-                'a builtin recipe like this: ebook-convert "Recipe Name.recipe" '
+                'a builtin recipe like this: aphrael "Recipe Name.recipe" '
                 'output.epub'))
     return parser
 
@@ -309,7 +309,7 @@ def create_option_parser(args, log):
         log('Created by:', __author__)
         raise SystemExit(0)
     if '--list-recipes' in args:
-        log('Recipes are not supported in ebook-converter')
+        log('Recipes are not supported in aphrael')
         raise SystemExit(0)
 
     parser = option_parser()

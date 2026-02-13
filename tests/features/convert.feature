@@ -1,5 +1,5 @@
 Feature: Ebook format conversion
-  As a user of ebook-converter
+  As a user of aphrael
   I want to convert ebooks between EPUB, MOBI, and AZW3 formats
   So that I can read them on different devices
 
@@ -29,9 +29,9 @@ Feature: Ebook format conversion
     And the output file should be a valid "epub" file
 
   Scenario: Show help message
-    When I run ebook-convert with "--help"
+    When I run aphrael with "--help"
     Then it should display usage information
 
   Scenario: Show version
-    When I run ebook-convert with "--version"
+    When I run aphrael with "--version"
     Then it should display version information

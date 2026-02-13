@@ -385,8 +385,8 @@ if __name__ == '__main__':
     with open(src, 'wb') as f:
         f.write(raw.encode('utf-8'))
 
-    subprocess.check_call(['ebook-convert', src, '.epub', '--level1-toc', '//h:p', '--no-default-epub-cover', '--flow-size', '1000000'])
-    subprocess.check_call(['ebook-convert', src, '.azw3', '--level1-toc', '//h:p', '--no-inline-toc', '--extract-to=x'])
+    subprocess.check_call(['aphrael', src, '.epub', '--level1-toc', '//h:p', '--no-default-epub-cover', '--flow-size', '1000000'])
+    subprocess.check_call(['aphrael', src, '.azw3', '--level1-toc', '//h:p', '--no-inline-toc', '--extract-to=x'])
     subprocess.call(['kindlegen', 'index.epub'])  # kindlegen exit code is not 0 as we don't have a cover
     subprocess.check_call(['calibre-debug', 'index.mobi'])
 

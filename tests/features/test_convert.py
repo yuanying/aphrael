@@ -121,7 +121,7 @@ def when_convert_mobi_to_format(conversion_context, output_format):
     return {'returncode': result.returncode, 'stdout': result.stdout, 'stderr': result.stderr}
 
 
-@when(parsers.parse('I run ebook-convert with "{args}"'), target_fixture='cli_result')
+@when(parsers.parse('I run aphrael with "{args}"'), target_fixture='cli_result')
 def when_run_with_args(args):
     result = subprocess.run(
         [sys.executable, '-m', 'calibre.ebooks.conversion.cli'] + args.split(),

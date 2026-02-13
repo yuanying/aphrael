@@ -46,7 +46,7 @@ def needs_recompile(obj, srcs):
 
 def build_book(src, dest, args=()):
     from calibre.ebooks.conversion.cli import main
-    main(['ebook-convert', src, dest, '-vv'] + list(args))
+    main(['aphrael', src, dest, '-vv'] + list(args))
 
 
 def add_resources(raw, rmap):

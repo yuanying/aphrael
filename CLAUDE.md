@@ -1,4 +1,4 @@
-# ebook-converter CLAUDE.md
+# aphrael CLAUDE.md
 
 ## 必須チェック項目
 
@@ -10,5 +10,5 @@
 
 ## プロジェクト概要
 
-calibre の `ebook-convert` ツールを EPUB/MOBI/AZW3 のみ対応のスタンドアロン Python パッケージとして再構成。
+calibre の `ebook-convert` ツールを基に EPUB/MOBI/AZW3 のみ対応のスタンドアロン Python パッケージとして再構成。
 C 拡張を純粋 Python で置き換え、不要モジュール（GUI, AI, デバイス等）を除去。

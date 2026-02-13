@@ -145,7 +145,7 @@ class Plugin:  # {{{
         True if the user clicks OK, False otherwise. The changes are
         automatically applied.
         '''
-        raise NotImplementedError('GUI not available in standalone ebook-converter')
+        raise NotImplementedError('GUI not available in standalone aphrael')
 
     def load_resources(self, names):
         '''
