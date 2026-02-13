@@ -58,14 +58,14 @@ Basic syntax:
 aphrael <input_file> [output_file] [options]
 ```
 
-If `output_file` is omitted, the output defaults to an AZW3 (KF8) file with a `.mobi` extension in the same directory as the input file. Kindle Paperwhite auto-detects the internal format from `.mobi` files, so this provides optimal Kindle output with no extra arguments.
+If `output_file` is omitted, the output defaults to a dual-format MOBI file (MOBI 6 + KF8) in the same directory as the input file. This file is compatible with all Kindle devices: modern Kindles use the KF8 section for enhanced formatting, while older models fall back to MOBI 6.
 
 When `output_file` is specified, the output format is automatically determined from its file extension.
 
 ### Examples
 
 ```bash
-# Default output: generates book.mobi (AZW3/KF8 format) for Kindle
+# Default output: generates book.mobi (dual-format MOBI 6 + KF8) for Kindle
 aphrael book.epub
 
 # EPUB to MOBI

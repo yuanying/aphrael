@@ -32,7 +32,7 @@ Feature: Ebook format conversion
     Given an EPUB file "01.epub"
     When I convert it without specifying an output file
     Then the default output file should be created with ".mobi" extension
-    And the default output file should be a valid AZW3 (KF8) file
+    And the default output file should be a dual-format MOBI (MOBI 6 + KF8)
 
   Scenario: Show help message
     When I run aphrael with "--help"
