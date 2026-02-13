@@ -221,3 +221,23 @@ def calibre_langcode_to_name(lc, localize=True):
 
 def get_udc():
     return None
+
+
+def get_lc_messages_path(lang):
+    '''Stub: Returns None since we only support English.'''
+    return
+
+
+def is_rtl_lang(lang=None):
+    '''Check if the given language is right-to-left.'''
+    if lang is None:
+        lang = get_lang()
+    return lang[:2].lower() in {'he', 'ar'}
+
+
+def load_iso3166():
+    '''Stub: Returns empty iso3166 data.'''
+    ans = getattr(load_iso3166, 'ans', None)
+    if ans is None:
+        ans = load_iso3166.ans = {'names': {}, 'codes': {}}
+    return ans

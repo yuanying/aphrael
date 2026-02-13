@@ -271,3 +271,8 @@ def bundled_binaries_dir() -> str:
 def sanitize_env_vars():
     '''Unset various environment variables that calibre uses.'''
     yield
+
+
+def get_windows_username():
+    '''Stub: Returns empty string on non-Windows.'''
+    return ''
