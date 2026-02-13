@@ -1,0 +1,89 @@
+[project]
+name = "ebook-converter"
+version = "0.1.0"
+description = "Standalone ebook converter for EPUB/MOBI/AZW3, extracted from calibre"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "GPL-3.0-only"}
+dependencies = [
+    "lxml>=5.0",
+    "css-parser>=1.0",
+    "chardet>=5.0",
+    "Pillow>=10.0",
+    "regex>=2023.0",
+    "html5-parser>=0.4",
+    "python-dateutil>=2.8",
+    "msgpack>=1.0",
+    "html5lib>=1.1",
+    "beautifulsoup4>=4.12",
+]
+
+[project.scripts]
+ebook-convert = "calibre.ebooks.conversion.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/calibre", "src/polyglot", "src/css_selectors", "src/tinycss"]
+
+[tool.hatch.build.targets.wheel.sources]
+"src" = ""
+"resources" = "calibre/_resources"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 160
+builtins = ['_', 'I', 'P']
+exclude = ["src/css_selectors/*", "src/polyglot/*", "src/tinycss/*"]
+preview = true
+
+[tool.ruff.format]
+quote-style = 'single'
+
+[tool.ruff.lint]
+explicit-preview-rules = true
+ignore = [
+    'E402', 'E741',
+    'UP012', 'UP030', 'C413', 'C420', 'PIE790', 'ISC003', 'FURB122', 'FURB166', 'FURB167',
+    'RUF001', 'RUF002', 'RUF003', 'RUF005', 'RUF012', 'RUF013', 'RUF015', 'RUF031', 'RUF100',
+    'PLE1205', 'PLW0602', 'PLW0603', 'PLW1510', 'PLW1641', 'PLW2901', 'PLC0415',
+    'PLR0911', 'PLR0912', 'PLR0913', 'PLR0914', 'PLR0915', 'PLR0916', 'PLR0917', 'PLR1702', 'PLR1704', 'PLR2004', 'PLR6301',
+    'RUF059',
+]
+select = [
+    'E', 'F', 'I', 'W', 'INT',
+    'Q', 'UP', 'YTT', 'TID', 'C4', 'COM818', 'PIE', 'RET501', 'ISC',
+    'PLE', 'PLW', 'PLC', 'PLR', 'ASYNC', 'FURB',
+    'RUF',
+    'RUF051', 'RUF056', 'RUF055', 'RUF039', 'RUF047',
+    'E302', 'E303', 'E304', 'E305', 'W391',
+    'E111', 'E112', 'E113', 'E117',
+    'E114', 'E115', 'E116', 'E261', 'E262', 'E265',
+    'E201', 'E202', 'E211', 'E251', 'E275',
+]
+unfixable = ['PIE794', 'ISC001']
+
+[tool.ruff.lint.isort]
+detect-same-package = true
+known-first-party = ["calibre_extensions", "calibre_plugins", "polyglot"]
+known-third-party = ["odf", "tinycss", "css_selectors"]
+relative-imports-order = "closest-to-furthest"
+split-on-trailing-comma = false
+
+[tool.ruff.lint.flake8-quotes]
+avoid-escape = true
+docstring-quotes = 'single'
+inline-quotes = 'single'
+multiline-quotes = 'single'
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-bdd>=8.1.0",
+    "ruff>=0.15.1",
+]
