@@ -89,7 +89,7 @@ class Plumber:
     def __init__(self, input, output, log, report_progress=DummyReporter(),
             dummy=False, merge_plugin_recs=True, abort_after_input_dump=False,
             override_input_metadata=False, for_regex_wizard=False, view_kepub=False,
-            output_fmt_override=None):
+            output_fmt_override=None, default_output_mode=False):
         '''
         :param input: Path to input file.
         :param output: Path to output file/folder
@@ -100,6 +100,7 @@ class Plumber:
             output = output.decode(filesystem_encoding)
         self.original_input_arg = input
         self.output_fmt_override = output_fmt_override
+        self.default_output_mode = default_output_mode
         self.for_regex_wizard = for_regex_wizard
         self.input = os.path.abspath(input)
         self.output = os.path.abspath(output)
@@ -970,6 +971,9 @@ OptionRecommendation(name='search_replace',
 
         set_profile(input_profiles, 'input')
         set_profile(output_profiles, 'output')
+
+        if self.default_output_mode and hasattr(self.opts, 'mobi_file_type'):
+            self.opts.mobi_file_type = 'both'
 
         self.read_user_metadata()
         self.opts.no_inline_navbars = self.opts.output_profile.supports_mobi_indexing \

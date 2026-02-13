@@ -202,30 +202,36 @@ def then_default_output_created(conversion_context, cli_result, ext):
     assert os.path.getsize(output_file) > 0, f'Default output file is empty: {output_file}'
 
 
-@then('the default output file should be a valid AZW3 (KF8) file')
-def then_default_output_is_kf8(conversion_context):
+@then('the default output file should be a dual-format MOBI (MOBI 6 + KF8)')
+def then_default_output_is_dual_format(conversion_context):
     output_file = conversion_context['default_output']
     with open(output_file, 'rb') as f:
         header = f.read(68)
         assert header[60:68] == b'BOOKMOBI', (
-            f'Not a valid MOBI/AZW3 file (missing BOOKMOBI magic): {header[60:68]!r}'
+            f'Not a valid MOBI file (missing BOOKMOBI magic): {header[60:68]!r}'
         )
-    # Check KF8 format: MOBI header version should be 8
+    # Dual-format (MOBI 6 + KF8) files contain a BOUNDARY record
     with open(output_file, 'rb') as f:
-        # PalmDB header: first record offset at byte 78 (after 76 byte header + 2 byte gap)
-        # Actually, let's read the number of records and find the first record
         f.seek(76)
         num_records = int.from_bytes(f.read(2), 'big')
         assert num_records > 0, 'No records in PalmDB'
-        # First record entry: 8 bytes (4 offset + 4 attributes)
-        first_record_offset = int.from_bytes(f.read(4), 'big')
-        # MOBI header starts at first_record_offset
-        # PalmDOC header: 16 bytes, then MOBI header
-        # MOBI header version is at offset 36 from start of first record
-        f.seek(first_record_offset + 36)
-        mobi_version = int.from_bytes(f.read(4), 'big')
-        assert mobi_version == 8, (
-            f'Expected MOBI version 8 (KF8/AZW3), got version {mobi_version}'
+        # Read all record offsets
+        record_offsets = []
+        for _ in range(num_records):
+            offset = int.from_bytes(f.read(4), 'big')
+            f.read(4)  # skip attributes
+            record_offsets.append(offset)
+        # Search for BOUNDARY record
+        found_boundary = False
+        for offset in record_offsets:
+            f.seek(offset)
+            data = f.read(8)
+            if data == b'BOUNDARY':
+                found_boundary = True
+                break
+        assert found_boundary, (
+            'Expected dual-format MOBI (MOBI 6 + KF8) with BOUNDARY record, '
+            'but no BOUNDARY record found'
         )
 
 

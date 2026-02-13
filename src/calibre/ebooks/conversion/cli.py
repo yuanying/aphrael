@@ -24,8 +24,8 @@ input_file [output_file] [options]
 Convert an e-book from one format to another.
 
 input_file is the input and output_file is the output. If output_file is \
-omitted, the output defaults to an AZW3 (KF8) file with a .mobi extension \
-in the same directory as the input file, suitable for Kindle devices.
+omitted, the output defaults to a dual-format MOBI file (MOBI 6 + KF8) \
+in the same directory as the input file, compatible with all Kindle devices.
 
 The output e-book format is guessed from the file extension of \
 output_file. output_file can also be of the special format .EXT where \
@@ -74,11 +74,12 @@ def check_command_line_options(parser, args, log):
         input = args[1]
 
     output_fmt_override = None
+    default_output_mode = False
     if len(args) < 3 or args[2].startswith('-'):
-        # No output file specified: default to .mobi with AZW3 (KF8) format
+        # No output file specified: default to .mobi with dual-format (MOBI 6 + KF8)
         base = os.path.splitext(os.path.basename(input))[0]
         output = os.path.join(os.path.dirname(input), base + '.mobi')
-        output_fmt_override = 'azw3'
+        default_output_mode = True
     else:
         output = args[2]
         if (output.startswith('.') and output[:2] not in {'..', '.'} and '/' not in
@@ -86,7 +87,7 @@ def check_command_line_options(parser, args, log):
             output = os.path.splitext(os.path.basename(input))[0]+output
         output = os.path.abspath(output)
 
-    return input, output, output_fmt_override
+    return input, output, output_fmt_override, default_output_mode
 
 
 def option_recommendation_to_cli_option(add_option, rec):
@@ -328,7 +329,8 @@ def create_option_parser(args, log):
         else:
             raise SystemExit(1)
 
-    input, output, output_fmt_override = check_command_line_options(parser, args, log)
+    input, output, output_fmt_override, default_output_mode = \
+        check_command_line_options(parser, args, log)
 
     from calibre.ebooks.conversion.plumber import Plumber
 
@@ -337,7 +339,8 @@ def create_option_parser(args, log):
         raise ValueError('Input file is the same as the output file')
 
     plumber = Plumber(input, output, log, reporter,
-                      output_fmt_override=output_fmt_override)
+                      output_fmt_override=output_fmt_override,
+                      default_output_mode=default_output_mode)
     add_input_output_options(parser, plumber)
     add_pipeline_options(parser, plumber)
 
@@ -386,7 +389,7 @@ def main(args=sys.argv):
     log = Log()
     parser, plumber = create_option_parser(args, log)
     opts, leftover_args = parser.parse_args(args)
-    max_positional = 3 if plumber.output_fmt_override is None else 2
+    max_positional = 2 if plumber.default_output_mode else 3
     if len(leftover_args) > max_positional:
         log.error('Extra arguments not understood:',
                   ', '.join(leftover_args[max_positional:]))
