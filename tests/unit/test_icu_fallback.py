@@ -54,10 +54,10 @@ class TestICUFallback(unittest.TestCase):
         self.assertEqual(strcmp(None, None), 0)
 
     def test_normalize(self):
-        from calibre.utils.icu import normalize
         import unicodedata
+
+        from calibre.utils.icu import normalize
         # NFC normalization
-        composed = '\u00e9'  # é as single char
         decomposed = 'e\u0301'  # e + combining accent
         self.assertEqual(normalize(decomposed), unicodedata.normalize('NFC', decomposed))
 
