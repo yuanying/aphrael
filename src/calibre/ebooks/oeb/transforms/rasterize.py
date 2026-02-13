@@ -17,7 +17,6 @@ from calibre import guess_type
 from calibre.ebooks.oeb.base import PNG_MIME, SVG_MIME, XHTML, XLINK, urlnormalize, xml2str, xpath
 from calibre.ebooks.oeb.stylizer import Stylizer
 from calibre.utils.imghdr import what
-from qt.core import QBuffer, QByteArray, QColor, QImage, QIODevice, QPainter, QSvgRenderer, Qt
 
 IMAGE_TAGS = {XHTML('img'), XHTML('object')}
 KEEP_ATTRS = {'class', 'style', 'width', 'height', 'align'}
@@ -37,7 +36,16 @@ class Unavailable(Exception):
     pass
 
 
+def _import_qt():
+    try:
+        from qt.core import QBuffer, QByteArray, QColor, QImage, QIODevice, QPainter, QSvgRenderer, Qt
+    except ImportError as e:
+        raise Unavailable(str(e))
+    return QBuffer, QByteArray, QColor, QImage, QIODevice, QPainter, QSvgRenderer, Qt
+
+
 def rasterize_svg(data=None, sizes=(), width=0, height=0, print=None, fmt='PNG', as_qimage=False):
+    QBuffer, QByteArray, QColor, QImage, QIODevice, QPainter, QSvgRenderer, Qt = _import_qt()
     if data is None:
         data = test_svg()
     svg = QSvgRenderer(QByteArray(data))
@@ -73,8 +81,7 @@ class SVGRasterizer:
     def __init__(self, base_css='', save_svg_originals=False):
         self.base_css = base_css
         self.save_svg_originals = save_svg_originals
-        from calibre.gui2 import must_use_qt
-        must_use_qt()
+        _import_qt()  # Verify Qt is available early
 
     @classmethod
     def config(cls, cfg):
@@ -204,6 +211,7 @@ class SVGRasterizer:
                 img.attrib[prop] = elem.attrib[prop]
 
     def rasterize_external(self, elem, style, item, svgitem):
+        QBuffer, QByteArray, QColor, QImage, QIODevice, QPainter, QSvgRenderer, Qt = _import_qt()
         width = style['width']
         height = style['height']
         width = (width / 72) * self.profile.dpi
