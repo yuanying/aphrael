@@ -88,7 +88,8 @@ class Plumber:
 
     def __init__(self, input, output, log, report_progress=DummyReporter(),
             dummy=False, merge_plugin_recs=True, abort_after_input_dump=False,
-            override_input_metadata=False, for_regex_wizard=False, view_kepub=False):
+            override_input_metadata=False, for_regex_wizard=False, view_kepub=False,
+            output_fmt_override=None):
         '''
         :param input: Path to input file.
         :param output: Path to output file/folder
@@ -98,6 +99,7 @@ class Plumber:
         if isbytestring(output):
             output = output.decode(filesystem_encoding)
         self.original_input_arg = input
+        self.output_fmt_override = output_fmt_override
         self.for_regex_wizard = for_regex_wizard
         self.input = os.path.abspath(input)
         self.output = os.path.abspath(output)
@@ -752,7 +754,9 @@ OptionRecommendation(name='search_replace',
                     raise ValueError('Input file must have an extension')
                 input_fmt = input_fmt[1:].lower()
 
-        if os.path.exists(self.output) and os.path.isdir(self.output):
+        if self.output_fmt_override is not None:
+            output_fmt = self.output_fmt_override
+        elif os.path.exists(self.output) and os.path.isdir(self.output):
             output_fmt = 'oeb'
         else:
             output_fmt = os.path.splitext(self.output)[1]

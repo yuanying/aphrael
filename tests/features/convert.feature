@@ -28,6 +28,12 @@ Feature: Ebook format conversion
     Then the output file should be created
     And the output file should be a valid "epub" file
 
+  Scenario: Convert EPUB with default output (no output file specified)
+    Given an EPUB file "01.epub"
+    When I convert it without specifying an output file
+    Then the default output file should be created with ".mobi" extension
+    And the default output file should be a valid AZW3 (KF8) file
+
   Scenario: Show help message
     When I run aphrael with "--help"
     Then it should display usage information
