@@ -12,12 +12,12 @@ from functools import lru_cache
 from urllib.parse import urldefrag
 
 from lxml import etree
-from qt.core import QBuffer, QByteArray, QColor, QImage, QIODevice, QPainter, QSvgRenderer, Qt
 
 from calibre import guess_type
 from calibre.ebooks.oeb.base import PNG_MIME, SVG_MIME, XHTML, XLINK, urlnormalize, xml2str, xpath
 from calibre.ebooks.oeb.stylizer import Stylizer
 from calibre.utils.imghdr import what
+from qt.core import QBuffer, QByteArray, QColor, QImage, QIODevice, QPainter, QSvgRenderer, Qt
 
 IMAGE_TAGS = {XHTML('img'), XHTML('object')}
 KEEP_ATTRS = {'class', 'style', 'width', 'height', 'align'}
