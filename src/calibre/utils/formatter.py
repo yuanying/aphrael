@@ -2115,23 +2115,6 @@ class TemplateFormatter(string.Formatter):
             self.restore_state(state)
 
 
-class ValidateFormatter:
-    '''
-    Provides a formatter that uses a fake book.
-
-    It is a class instead of a function for compatibility reasons.
-    '''
-
-    def validate(self, template):
-
-        from calibre.ebooks.metadata.book.base import get_model_metadata_instance
-        from calibre.ebooks.metadata.book.formatter import SafeFormat
-        return SafeFormat().unsafe_format(template, {}, get_model_metadata_instance())
-
-
-validation_formatter = ValidateFormatter()
-
-
 class EvalFormatter(TemplateFormatter):
     '''
     A template formatter that uses a simple dict instead of an mi instance
