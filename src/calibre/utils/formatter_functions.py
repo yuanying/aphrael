@@ -17,7 +17,6 @@ import os.path
 import posixpath
 import re
 import traceback
-from contextlib import suppress
 from datetime import datetime, timedelta
 from enum import Enum, auto
 from functools import partial
@@ -54,7 +53,6 @@ CASE_CHANGES = _('Case changes')
 DATE_FUNCTIONS = _('Date functions')
 DB_FUNCS = _('Database functions')
 URL_FUNCTIONS = _('URL functions')
-GUI_FUNCTIONS = _('GUI functions')
 
 
 # Class and method to save an untranslated copy of translated strings
@@ -2614,79 +2612,6 @@ then include them in the ``val_separator`` string.
         return val_sep.join(n for n in names)
 
 
-class BuiltinConnectedDeviceName(BuiltinFormatterFunction):
-    name = 'connected_device_name'
-    arg_count = 1
-    category = GET_FROM_METADATA
-    def __doc__getter__(self): return translate_ffml(
-r'''
-``connected_device_name(storage_location_key)`` -- if a device is connected then
-return the device name, otherwise return the empty string.[/] Each storage location
-on a device has its own device name. The ``storage_location_key`` names are
-``'main'``, ``'carda'`` and ``'cardb'``. This function works only in the GUI.
-''')
-
-    def evaluate(self, formatter, kwargs, mi, locals, storage_location):
-        # We can't use get_database() here because we need the device manager.
-        # In other words, the function really does need the GUI
-        with suppress(Exception):
-            # Do the import here so that we don't entangle the GUI when using
-            # command line functions
-            from calibre.gui2.ui import get_gui
-            info = get_gui().device_manager.get_current_device_information()
-            if info is None:
-                return ''
-            try:
-                if storage_location not in {'main', 'carda', 'cardb'}:
-                    raise ValueError(
-                         _('connected_device_name: invalid storage location "{}"').format(storage_location))
-                info = info['info'][4]
-                if storage_location not in info:
-                    return ''
-                return info[storage_location]['device_name']
-            except Exception:
-                traceback.print_exc()
-                raise
-        self.only_in_gui_error()
-
-
-class BuiltinConnectedDeviceUUID(BuiltinFormatterFunction):
-    name = 'connected_device_uuid'
-    arg_count = 1
-    category = GET_FROM_METADATA
-    def __doc__getter__(self): return translate_ffml(
-r'''
-``connected_device_uuid(storage_location_key)`` -- if a device is connected then
-return the device uuid (unique id), otherwise return the empty string.[/] Each
-storage location on a device has a different uuid. The ``storage_location_key``
-location names are ``'main'``, ``'carda'`` and ``'cardb'``. This function works
-only in the GUI.
-''')
-
-    def evaluate(self, formatter, kwargs, mi, locals, storage_location):
-        # We can't use get_database() here because we need the device manager.
-        # In other words, the function really does need the GUI
-        with suppress(Exception):
-            # Do the import here so that we don't entangle the GUI when using
-            # command line functions
-            from calibre.gui2.ui import get_gui
-            info = get_gui().device_manager.get_current_device_information()
-            if info is None:
-                return ''
-            try:
-                if storage_location not in {'main', 'carda', 'cardb'}:
-                    raise ValueError(
-                         _('connected_device_name: invalid storage location "{}"').format(storage_location))
-                info = info['info'][4]
-                if storage_location not in info:
-                    return ''
-                return info[storage_location]['device_store_uuid']
-            except Exception:
-                traceback.print_exc()
-                raise
-        self.only_in_gui_error()
-
-
 class BuiltinCheckYesNo(BuiltinFormatterFunction):
     name = 'check_yes_no'
     arg_count = 4
@@ -3267,29 +3192,6 @@ This function works only in the GUI and the content server.
             raise ValueError(str(e))
 
 
-class BuiltinIsDarkMode(BuiltinFormatterFunction):
-    name = 'is_dark_mode'
-    arg_count = 0
-    category = OTHER
-    def __doc__getter__(self): return translate_ffml(
-r'''
-``is_dark_mode()`` -- returns ``'1'`` if calibre is running in dark mode, ``''``
-(the empty string) otherwise.[/] This function can be used in advanced color and
-icon rules to choose different colors/icons according to the mode. Example:
-[CODE]
-   if is_dark_mode() then 'dark.png' else 'light.png' fi
-[/CODE]
-''')
-
-    def evaluate(self, formatter, kwargs, mi, locals):
-        try:
-            # Import this here so that Qt isn't referenced unless this function is used.
-            from calibre.gui2 import is_dark_theme
-            return '1' if is_dark_theme() else ''
-        except Exception:
-            only_in_gui_error('is_dark_mode')
-
-
 class BuiltinFieldListCount(BuiltinFormatterFunction):
     name = 'list_count_field'
     arg_count = 0
@@ -3649,80 +3551,6 @@ This can be useful to truncate a value.
         return pat.sub(repl, template)
 
 
-class BuiltinSelectedBooks(BuiltinFormatterFunction):
-    name = 'selected_books'
-    arg_count = 0
-    category = GUI_FUNCTIONS
-    def __doc__getter__(self): return translate_ffml(
-r'''
-``selected_books([sorted_by, ascending])`` -- returns a list of book ids in
-selection order for the currently selected books.
-
-This function can be used only in the GUI.
-''')
-
-    def evaluate(self, formatter, kwargs, mi, locals, *args):
-        from calibre.gui2.ui import get_gui
-        g = get_gui()
-        book_ids = g.current_view().get_selected_ids()
-        return ', '.join([str(book_id) for book_id in book_ids])
-
-
-class BuiltinSortBookIds(BuiltinFormatterFunction):
-    name = 'sort_book_ids'
-    arg_count = -1
-    category = GUI_FUNCTIONS
-    def __doc__getter__(self): return translate_ffml(
-r'''
-``sort_book_ids(book_ids, sorted_by, ascending [, sorted_by, ascending]*)`` --
-returns the list of book ids sorted by the column specified by the lookup name
-in ``sorted_by`` in the order specified by ``ascending``. If ``ascending`` is
-``'1'`` then the books are sorted by the value in the 'sorted_by' column in
-ascending order, otherwise in descending order. You can have multiple pairs of
-``sorted_by, ascending``. The first pair specifies the major order.
-
-This function can be used only in the GUI.
-''')
-
-    def evaluate(self, formatter, kwargs, mi, locals, book_ids, *args):
-        from calibre.gui2.ui import get_gui
-        g = get_gui()
-        bids = [int(b.strip()) for b in book_ids.split(',')]
-        if len(args) < 2:
-            raise ValueError(_('The sort_book_ids function requires at least 3 arguments'))
-        if len(args) % 2 != 0:
-            raise ValueError(_('The id and direction arguments must be in pairs'))
-        sort_spec = []
-        for i in range(0, len(args), 2):
-            sort_by = args[i]
-            asc = True if args[i+1] == '1' else False
-            sort_spec.append((sort_by, asc))
-        bids = g.current_db.new_api.multisort(sort_spec, bids)
-        return ', '.join([str(b) for b in bids])
-
-
-class BuiltinSelectedColumn(BuiltinFormatterFunction):
-    name = 'selected_column'
-    arg_count = 0
-    category = GUI_FUNCTIONS
-    def __doc__getter__(self): return translate_ffml(
-r'''
-``selected_column()`` -- returns the lookup name of the column containing the currently
-selected cell. It returns ``''`` if no cell is selected.
-
-This function can be used only in the GUI.
-''')
-
-    def evaluate(self, formatter, kwargs, mi, locals):
-        from calibre.gui2.ui import get_gui
-        v = get_gui().current_view()
-        idx = v.currentIndex()
-        if idx.isValid():
-            key = v.column_map[idx.column()]
-            return key
-        return ''
-
-
 class BuiltinFString(BuiltinFormatterFunction):
     name = 'f_string'
     arg_count = 1
@@ -3772,7 +3600,7 @@ _formatter_builtins = [
     BuiltinAuthorLinks(), BuiltinAuthorSorts(), BuiltinBookCount(),
     BuiltinBookValues(), BuiltinBooksize(),
     BuiltinCapitalize(), BuiltinCharacter(), BuiltinCheckYesNo(), BuiltinCeiling(),
-    BuiltinCmp(), BuiltinConnectedDeviceName(), BuiltinConnectedDeviceUUID(), BuiltinContains(),
+    BuiltinCmp(), BuiltinContains(),
     BuiltinCount(), BuiltinCurrentLibraryName(), BuiltinCurrentLibraryPath(),
     BuiltinCurrentVirtualLibraryName(), BuiltinDateArithmetic(),
     BuiltinDaysBetween(), BuiltinDivide(), BuiltinEncodeForURL(), BuiltinEval(),
@@ -3784,7 +3612,7 @@ _formatter_builtins = [
     BuiltinFormatsSizes(), BuiltinFractionalPart(),BuiltinFString(), BuiltinGetLink(),
     BuiltinGetNote(), BuiltinGlobals(), BuiltinHasCover(), BuiltinHasExtraFiles(),
     BuiltinHasNote(), BuiltinHumanReadable(), BuiltinIdentifierInList(),
-    BuiltinIfempty(), BuiltinIsDarkMode(), BuiltinLanguageCodes(), BuiltinLanguageStrings(),
+    BuiltinIfempty(), BuiltinLanguageCodes(), BuiltinLanguageStrings(),
     BuiltinInList(), BuiltinIsMarked(), BuiltinListCountMatching(),
     BuiltinListDifference(), BuiltinListEquals(), BuiltinListIntersection(),
     BuiltinListitem(), BuiltinListJoin(), BuiltinListRe(),
@@ -3795,8 +3623,8 @@ _formatter_builtins = [
     BuiltinOr(), BuiltinPrint(), BuiltinQueryString(), BuiltinRatingToStars(),
     BuiltinRange(), BuiltinRawField(), BuiltinRawList(),
     BuiltinRe(), BuiltinReGroup(), BuiltinRound(), BuiltinSelect(),
-    BuiltinSelectedBooks(), BuiltinSelectedColumn(), BuiltinSeriesSort(),
-    BuiltinSetGlobals(), BuiltinShorten(), BuiltinSortBookIds(),
+    BuiltinSeriesSort(),
+    BuiltinSetGlobals(), BuiltinShorten(),
     BuiltinStrcat(), BuiltinStrcatMax(),
     BuiltinStrcmp(), BuiltinStrcmpcase(), BuiltinStrInList(), BuiltinStrlen(), BuiltinSubitems(),
     BuiltinSublist(),BuiltinSubstr(), BuiltinSubtract(), BuiltinSwapAroundArticles(),

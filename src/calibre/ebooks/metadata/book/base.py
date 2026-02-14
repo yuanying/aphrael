@@ -895,13 +895,9 @@ def field_from_string(field, raw, field_metadata):
 
 def get_model_metadata_instance():
     '''
-    Get a metadata instance that contains all the fields in the current database
-    with the fields to a plausible value. This function must only be used in
-    the GUI thread.
+    Get a metadata instance that contains all the fields in the current
+    database with the fields set to plausible values.
     '''
-    from calibre.gui2 import is_gui_thread
-    if not is_gui_thread():
-        raise ValueError('get_model_metadata_instance() must only be used in the GUI thread')
 
     mi = Metadata(_('Title'), [_('Author')])
     mi.author_sort = _('Author Sort')

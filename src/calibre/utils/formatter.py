@@ -2117,16 +2117,12 @@ class TemplateFormatter(string.Formatter):
 
 class ValidateFormatter:
     '''
-    Provides a formatter that uses a fake book. This class must be used only
-    in the GUI thread.
+    Provides a formatter that uses a fake book.
 
     It is a class instead of a function for compatibility reasons.
     '''
 
     def validate(self, template):
-        from calibre.gui2 import is_gui_thread
-        if not is_gui_thread():
-            raise ValueError('A ValidateFormatter must only be used in the GUI thread')
 
         from calibre.ebooks.metadata.book.base import get_model_metadata_instance
         from calibre.ebooks.metadata.book.formatter import SafeFormat
