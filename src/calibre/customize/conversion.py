@@ -95,32 +95,6 @@ class DummyReporter:
 
 def gui_configuration_widget(name, parent, get_option_by_name,
         get_option_help, db, book_id, for_output=True):
-    import importlib
-
-    def widget_factory(cls):
-        return cls(parent, get_option_by_name,
-            get_option_help, db, book_id)
-
-    if for_output:
-        try:
-            output_widget = importlib.import_module(
-                    'calibre.gui2.convert.'+name)
-            pw = output_widget.PluginWidget
-            pw.ICON = 'back.png'
-            pw.HELP = _('Options specific to the output format.')
-            return widget_factory(pw)
-        except ImportError:
-            pass
-    else:
-        try:
-            input_widget = importlib.import_module(
-                    'calibre.gui2.convert.'+name)
-            pw = input_widget.PluginWidget
-            pw.ICON = 'forward.png'
-            pw.HELP = _('Options specific to the input format.')
-            return widget_factory(pw)
-        except ImportError:
-            pass
     return None
 
 
