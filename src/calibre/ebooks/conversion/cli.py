@@ -353,10 +353,6 @@ def abspath(x):
     return os.path.abspath(os.path.expanduser(x))
 
 
-def escape_sr_pattern(exp):
-    return exp.replace('\n', '\ue123')
-
-
 def read_sr_patterns(path, log=None):
     import json
     import re
@@ -442,17 +438,6 @@ def main(args=sys.argv):
     log(_('Output saved to'), ' ', plumber.output)
 
     return 0
-
-
-def manual_index_strings():
-    return _('''\
-The options and default values for the options change depending on both the
-input and output formats, so you should always check with::
-
-    %s
-
-Below are the options that are common to all conversion, followed by the
-options specific to every input and output format.''')
 
 
 if __name__ == '__main__':
