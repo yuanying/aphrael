@@ -84,34 +84,10 @@ class CoverManager:
 
     def default_cover(self):
         '''
-        Create a generic cover for books that don't have a cover
+        Create a generic cover for books that don't have a cover.
+        Cover generation requires Qt which is not available in headless mode.
         '''
-        if self.no_default_cover:
-            return None
-        self.log('Generating default cover')
-        m = self.oeb.metadata
-        title = str(m.title[0])
-        authors = [str(x) for x in m.creator if x.role == 'aut']
-        try:
-            from calibre.ebooks.covers import create_cover
-            series = series_index = None
-            if m.series:
-                try:
-                    series, series_index = str(m.series[0]), m.series_index[0]
-                except IndexError:
-                    pass
-            img_data = create_cover(title, authors, series, series_index)
-            id, href = self.oeb.manifest.generate('cover',
-                    'cover_image.jpg')
-            item = self.oeb.manifest.add(id, href, guess_type('t.jpg')[0],
-                        data=img_data)
-            m.clear('cover')
-            m.add('cover', item.id)
-
-            return item.href
-        except Exception:
-            self.log.exception('Failed to generate default cover')
-        return None
+        return
 
     def inspect_cover(self, href):
         from calibre.ebooks.oeb.base import urlnormalize

@@ -23,7 +23,7 @@ class _StubClass:
         return '<StubClass>'
 
 
-# Stub classes
+# SVG rasterizer stubs
 QBuffer = _StubClass
 QByteArray = _StubClass
 QColor = _StubClass
@@ -32,24 +32,9 @@ QIODevice = _StubClass
 QPainter = _StubClass
 QSvgRenderer = _StubClass
 Qt = _StubClass()
+
+# Other stubs referenced in the codebase
 QApplication = _StubClass
-QUrl = _StubClass
-QPixmap = _StubClass
-QRawFont = _StubClass
-QFont = _StubClass
-QFontDatabase = _StubClass
-QFontInfo = _StubClass
-QPen = _StubClass
-QBrush = _StubClass
-QRect = _StubClass
-QRectF = _StubClass
-QSizeF = _StubClass
-QPointF = _StubClass
-QSize = _StubClass
-QPoint = _StubClass
-QTransform = _StubClass
-QPainterPath = _StubClass
-QMarginsF = _StubClass
-QPageSize = _StubClass
-QPageLayout = _StubClass
-QPdfWriter = _StubClass
+QEventLoop = _StubClass
+pyqtSignal = _StubClass
+sip = _StubClass()
