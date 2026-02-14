@@ -404,7 +404,5 @@ def undo_replace_word(container, undo_cache):
 if __name__ == '__main__':
     import pprint
 
-    from calibre.gui2.tweak_book import dictionaries, set_book_locale
     container = get_container(sys.argv[-1], tweak_mode=True)
-    set_book_locale(container.mi.language)
-    pprint.pprint(get_all_words(container, dictionaries.default_locale))
+    pprint.pprint(get_all_words(container, container.mi.language))
