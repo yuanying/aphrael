@@ -716,7 +716,3 @@ def unkepubify_main(args=sys.argv):
             outpath = path[:-len('kepub.epub')] + 'epub'
         kepub_path = unkepubify_path(path, outpath, allow_overwrite=True)
         print(f'{path} converted to: {kepub_path}')
-
-
-if __name__ == '__main__':
-    kepubify_main()

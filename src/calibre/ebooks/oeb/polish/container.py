@@ -8,7 +8,6 @@ import logging
 import os
 import re
 import shutil
-import sys
 import unicodedata
 import uuid
 from collections import defaultdict
@@ -50,7 +49,7 @@ from calibre.ebooks.oeb.polish.errors import DRMError, InvalidBook
 from calibre.ebooks.oeb.polish.parsing import decode_xml
 from calibre.ebooks.oeb.polish.parsing import parse as parse_html_tweak
 from calibre.ebooks.oeb.polish.utils import OEB_FONTS, CommentFinder, PositionFinder, adjust_mime_for_epub, guess_type, insert_self_closing, parse_css
-from calibre.ptempfile import PersistentTemporaryDirectory, PersistentTemporaryFile, TemporaryDirectory
+from calibre.ptempfile import PersistentTemporaryDirectory, TemporaryDirectory
 from calibre.utils.filenames import hardlink_file, make_long_path_useable, nlinks_file, retry_on_fail
 from calibre.utils.ipc.simple_worker import WorkerError, fork_job
 from calibre.utils.logging import default_log
@@ -1639,19 +1638,3 @@ def get_container(path, log=None, tdir=None, tweak_mode=False, ebook_cls=None) -
             shutil.rmtree(tdir, ignore_errors=True)
         raise
     return ebook
-
-
-def test_roundtrip():
-    ebook = get_container(sys.argv[-1])
-    p = PersistentTemporaryFile(suffix='.'+sys.argv[-1].rpartition('.')[-1])
-    p.close()
-    ebook.commit(outpath=p.name)
-    ebook2 = get_container(p.name)
-    ebook3 = get_container(p.name)
-    diff = ebook3.compare_to(ebook2)
-    if diff is not None:
-        print(diff)
-
-
-if __name__ == '__main__':
-    test_roundtrip()
