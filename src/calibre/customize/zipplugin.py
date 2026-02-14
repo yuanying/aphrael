@@ -13,8 +13,7 @@ import sys
 import threading
 import zipfile
 from collections import OrderedDict
-from collections.abc import Iterable
-from functools import lru_cache, partial
+from functools import partial
 from importlib.machinery import ModuleSpec
 from importlib.util import decode_source
 
@@ -52,63 +51,6 @@ def get_resources(zfp, name_or_list_of_names, print_tracebacks_for_missing_resou
     if len(names) == 1:
         ans = ans.pop(names[0], None)
 
-    return ans
-
-
-@lru_cache(maxsize=512)
-def get_icons_cached(
-    zfp: str, namelist: tuple[str, ...], plugin_name: str = '', folder_in_zip_file: str = '',
-):
-    from qt.core import QIcon
-    ans = {}
-    tracebacks = {}
-    with zipfile.ZipFile(zfp) as zf:
-        for name in namelist:
-            arcname = posixpath.join(folder_in_zip_file, name)
-            theme_name = posixpath.join(plugin_name, name)
-            try:
-                data = zf.read(arcname)
-            except KeyError:
-                import traceback
-                data = b''
-                tracebacks[name] = traceback.format_exc()
-            ans[name] = QIcon.ic(theme_name, fallback=data)
-    return ans, tracebacks
-
-
-def get_icons(
-    zfp: str, name_or_list_of_names: str | Iterable[str],
-    plugin_name: str = '', folder_in_zip_file: str = '',
-    print_tracebacks_for_missing_resources: bool = True,
-):
-    '''
-    Load icons from the plugin zip file
-
-    :param name_or_list_of_names: List of paths to resources in the zip file using / as
-                separator, or a single path
-
-    :param plugin_name: The human friendly name of the plugin, used to load icons from
-                the current theme, if present.
-
-    :param folder_in_zip_file: Path to a folder in the zip file from which to load the icons.
-                Default is the root of the zip file. Use / as separator.
-
-    :param print_tracebacks_for_missing_resources: When True missing resources are reported to STDERR
-
-    :return: A dictionary of the form ``{name : QIcon}``. Any names
-                that were not found in the zip file will be null QIcons.
-                If a single path is passed in the return value will
-                be a QIcon.
-    '''
-    namelist = tuple(
-        (name_or_list_of_names,) if isinstance(name_or_list_of_names, (str, bytes)) else name_or_list_of_names)
-    ans, tracebacks = get_icons_cached(zfp, namelist, plugin_name or '', folder_in_zip_file or '')
-    if print_tracebacks_for_missing_resources:
-        for name, tb in tracebacks.items():
-            print('Failed to load resource:', repr(name), 'from the plugin zip file:', zfp, file=sys.stderr)
-            print(tb, file=sys.stderr)
-    if len(namelist) == 1:
-        return ans[namelist[0]]
     return ans
 
 
@@ -214,7 +156,6 @@ class CalibrePluginLoader:
         if self.zip_file_path:
             zfp = self.zip_file_path
             module.__dict__['get_resources'] = partial(get_resources, zfp)
-            module.__dict__['get_icons'] = partial(get_icons, zfp)
             module.__dict__['load_translations'] = partial(load_translations, module.__dict__, zfp)
         exec(compiled, module.__dict__)
 

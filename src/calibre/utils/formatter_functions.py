@@ -3723,42 +3723,6 @@ This function can be used only in the GUI.
         return ''
 
 
-class BuiltinShowDialog(BuiltinFormatterFunction):
-    name = 'show_dialog'
-    arg_count = 1
-    category = GUI_FUNCTIONS
-    def __doc__getter__(self): return translate_ffml(
-r'''
-``show_dialog(html_or_text)`` -- show a dialog containing the html or text. The
-function returns ``'1'`` if the user presses OK, ``''`` if Cancel.
-
-This function can be used only in the GUI.
-''')
-
-    def evaluate(self, formatter, kwargs, mi, locals, html):
-        from calibre.gui2.widgets2 import Dialog, HTMLDisplay
-        from qt.core import QDialog, QVBoxLayout
-
-        class HTMLDialog(Dialog):
-
-            def __init__(self, title, prefs):
-                super().__init__(title, 'formatter_html_dialog', prefs=prefs)
-
-            def setup_ui(self):
-                l = QVBoxLayout(self)
-                d = self.display = HTMLDisplay()
-                l.addWidget(d)
-                l.addWidget(self.bb)
-
-            def set_html(self, tt_text):
-                self.display.setHtml(tt_text)
-
-        db = get_database(mi, 'show_dialog')
-        d = HTMLDialog(_('Template output'), db.new_api.backend.prefs)
-        d.set_html(html)
-        return '1' if d.exec() == QDialog.DialogCode.Accepted else ''
-
-
 class BuiltinFString(BuiltinFormatterFunction):
     name = 'f_string'
     arg_count = 1
@@ -3832,7 +3796,7 @@ _formatter_builtins = [
     BuiltinRange(), BuiltinRawField(), BuiltinRawList(),
     BuiltinRe(), BuiltinReGroup(), BuiltinRound(), BuiltinSelect(),
     BuiltinSelectedBooks(), BuiltinSelectedColumn(), BuiltinSeriesSort(),
-    BuiltinSetGlobals(), BuiltinShorten(), BuiltinShowDialog(), BuiltinSortBookIds(),
+    BuiltinSetGlobals(), BuiltinShorten(), BuiltinSortBookIds(),
     BuiltinStrcat(), BuiltinStrcatMax(),
     BuiltinStrcmp(), BuiltinStrcmpcase(), BuiltinStrInList(), BuiltinStrlen(), BuiltinSubitems(),
     BuiltinSublist(),BuiltinSubstr(), BuiltinSubtract(), BuiltinSwapAroundArticles(),

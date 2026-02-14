@@ -160,17 +160,6 @@ def normalize(x):
     return x
 
 
-def calibre_cover(title, author_string, series_string=None,
-        output_format='jpg', title_size=46, author_size=36, logo_path=None):
-    title = normalize(title)
-    author_string = normalize(author_string)
-    series_string = normalize(series_string)
-    from calibre.ebooks.covers import calibre_cover2
-    from calibre.utils.img import image_to_data
-    ans = calibre_cover2(title, author_string or '', series_string or '', logo_path=logo_path, as_qimage=True)
-    return image_to_data(ans, fmt=output_format)
-
-
 UNIT_RE = re.compile(r'^(-*[0-9]*[.]?[0-9]*)\s*(%|em|ex|en|px|mm|cm|in|pt|pc|rem|q)$')
 
 
@@ -228,11 +217,27 @@ def parse_css_length(value):
 
 
 def generate_masthead(title, output_path=None, width=600, height=60):
-    from calibre.ebooks.conversion.config import load_defaults
-    recs = load_defaults('mobi_output')
-    masthead_font_family = recs.get('masthead_font', None)
-    from calibre.ebooks.covers import generate_masthead
-    return generate_masthead(title, output_path=output_path, width=width, height=height, font_family=masthead_font_family)
+    from io import BytesIO
+
+    from PIL import Image, ImageDraw
+
+    img = Image.new('L', (width, height), 'white')
+    draw = ImageDraw.Draw(img)
+    if title:
+        try:
+            from PIL import ImageFont
+            font = ImageFont.truetype('DejaVuSans.ttf', (height * 3) // 4)
+        except Exception:
+            font = ImageFont.load_default()
+        draw.text((0, height // 8), title, fill='black', font=font)
+    buf = BytesIO()
+    img.save(buf, format='GIF')
+    data = buf.getvalue()
+    if output_path is not None:
+        with open(output_path, 'wb') as f:
+            f.write(data)
+        return
+    return data
 
 
 def escape_xpath_attr(value):

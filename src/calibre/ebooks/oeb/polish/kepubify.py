@@ -549,11 +549,8 @@ def kepubify_container(container: Container, opts: Options, max_workers: int = 0
     metadata_lang = container.mi.language
     cover_image_name = find_cover_image(container) or find_cover_image3(container) or find_cover_image_omf(container)
     mi = container.mi
-    if not cover_image_name:
-        from calibre.ebooks.covers import generate_cover
-        cdata = generate_cover(mi)
-        cover_image_name = container.add_file(f'{DUMMY_COVER_IMAGE_NAME}.jpeg', cdata, modify_name_if_needed=True)
-    container.apply_unique_properties(cover_image_name, 'cover-image')
+    if cover_image_name:
+        container.apply_unique_properties(cover_image_name, 'cover-image')
     kobo_js_name = container.add_file(
             uniqify_name(container, KOBO_JS_NAME), kobo_js(), media_type='application/javascript', suggested_id='js-kobo.js')
     if not find_cover_page(container) and not first_spine_item_is_probably_title_page(container):

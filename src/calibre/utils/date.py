@@ -155,52 +155,6 @@ def safeyear(x):
     return min(max(MINYEAR, x), MAXYEAR)
 
 
-def qt_to_dt(qdate_or_qdatetime, as_utc=True):
-    from qt.core import QDateTime, Qt
-    o = qdate_or_qdatetime
-    if o is None or is_date_undefined(qdate_or_qdatetime):
-        return UNDEFINED_DATE
-    if hasattr(o, 'toUTC'):  # QDateTime
-        def c(o: QDateTime, tz=utc_tz):
-            d, t = o.date(), o.time()
-            try:
-                return datetime(safeyear(d.year()), d.month(), d.day(), t.hour(), t.minute(), t.second(), t.msec()*1000, tz)
-            except ValueError:
-                return datetime(safeyear(d.year()), d.month(), 1, t.hour(), t.minute(), t.second(), t.msec()*1000, tz)
-
-        # DST causes differences in how python and Qt convert automatically from local to UTC, so convert explicitly ourselves
-        # QDateTime::toUTC() and datetime.astimezone(utc_tz) give
-        # different results for datetimes in the local_tz when DST is involved. Sigh.
-        spec = o.timeSpec()
-        if spec == Qt.TimeSpec.LocalTime:
-            ans = c(o, local_tz)
-        elif spec == Qt.TimeSpec.UTC:
-            ans = c(o, utc_tz)
-        else:
-            ans = c(o.toUTC(), utc_tz)
-        return ans.astimezone(utc_tz if as_utc else local_tz)
-
-    try:
-        dt = datetime(safeyear(o.year()), o.month(), o.day()).replace(tzinfo=_local_tz)
-    except ValueError:
-        dt = datetime(safeyear(o.year()), o.month(), 1).replace(tzinfo=_local_tz)
-    return dt.astimezone(_utc_tz if as_utc else _local_tz)
-
-
-def qt_from_dt(d: datetime, assume_utc=False):
-    from qt.core import QDate, QDateTime, QTime
-    if is_date_undefined(d):
-        from calibre.gui2 import UNDEFINED_QDATETIME
-        return UNDEFINED_QDATETIME
-    if d.tzinfo is None:
-        d = d.replace(tzinfo=utc_tz if assume_utc else local_tz)
-    d = d.astimezone(local_tz)
-    # not setting a time zone means this QDateTime has timeSpec() ==
-    # LocalTime which is what we want for display/editing.
-    ans = QDateTime(QDate(d.year, d.month, d.day), QTime(d.hour, d.minute, d.second, int(d.microsecond / 1000)))
-    return ans
-
-
 def fromtimestamp(ctime, as_utc=True):
     return datetime.fromtimestamp(ctime, _utc_tz if as_utc else _local_tz)
 
