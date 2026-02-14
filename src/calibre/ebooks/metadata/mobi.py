@@ -483,14 +483,6 @@ def get_metadata(stream):
     from calibre.utils.img import save_cover_data_to
 
     stream.seek(0)
-    try:
-        raw = stream.read(3)
-    except Exception:
-        raw = b''
-    stream.seek(0)
-    if raw == b'TPZ':
-        from calibre.ebooks.metadata.topaz import get_metadata
-        return get_metadata(stream)
     from calibre.utils.logging import Log
     log = Log()
     try:
