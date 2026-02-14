@@ -9,15 +9,23 @@ import pickle
 import subprocess
 from zipfile import ZipFile
 
+import pytest
+
+from calibre.utils.resources import get_path as _P
+
+_font_path = _P('fonts/liberation/LiberationMono-Italic.ttf')
+if not os.path.exists(_font_path):
+    pytest.skip('Required resource fonts not available', allow_module_level=True)
+
 from calibre import CurrentDir
 from calibre.ebooks.oeb.polish.container import OCF_NS, clone_container
 from calibre.ebooks.oeb.polish.container import get_container as _gc
 from calibre.ebooks.oeb.polish.replace import rationalize_folders, rename_files
 from calibre.ebooks.oeb.polish.split import merge, split
-from calibre.ebooks.oeb.polish.tests.base import BaseTest, get_simple_book, get_split_book
 from calibre.ptempfile import TemporaryDirectory, TemporaryFile
 from calibre.utils.filenames import nlinks_file
 from calibre.utils.resources import get_path as P
+from tests.unit.polish.base import BaseTest, get_simple_book, get_split_book
 
 
 def get_container(*args, **kwargs):

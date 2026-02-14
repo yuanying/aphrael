@@ -12,7 +12,7 @@ from lxml import etree
 from calibre.ebooks.oeb.base import SVG_NS, XHTML_NS, XLINK_NS, XPath
 from calibre.ebooks.oeb.parse_utils import html5_parse
 from calibre.ebooks.oeb.polish.parsing import parse_html5 as parse
-from calibre.ebooks.oeb.polish.tests.base import BaseTest
+from tests.unit.polish.base import BaseTest
 
 
 def nonvoid_cdata_elements(test, parse_function):
