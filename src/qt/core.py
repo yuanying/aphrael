@@ -32,9 +32,3 @@ QIODevice = _StubClass
 QPainter = _StubClass
 QSvgRenderer = _StubClass
 Qt = _StubClass()
-
-# Other stubs referenced in the codebase
-QApplication = _StubClass
-QEventLoop = _StubClass
-pyqtSignal = _StubClass
-sip = _StubClass()
