@@ -93,11 +93,6 @@ class DummyReporter:
         pass
 
 
-def gui_configuration_widget(name, parent, get_option_by_name,
-        get_option_help, db, book_id, for_output=True):
-    return None
-
-
 class InputFormatPlugin(Plugin):
     '''
     InputFormatPlugins are responsible for converting a document into
@@ -232,17 +227,6 @@ class InputFormatPlugin(Plugin):
         '''
         pass
 
-    def gui_configuration_widget(self, parent, get_option_by_name,
-            get_option_help, db, book_id=None):
-        '''
-        Called to create the widget used for configuring this plugin in the
-        calibre GUI. The widget must be an instance of the PluginWidget class.
-        See the builtin input plugins for examples.
-        '''
-        name = self.name.lower().replace(' ', '_')
-        return gui_configuration_widget(name, parent, get_option_by_name,
-                get_option_help, db, book_id, for_output=False)
-
 
 class OutputFormatPlugin(Plugin):
     '''
@@ -331,14 +315,3 @@ class OutputFormatPlugin(Plugin):
 
         '''
         pass
-
-    def gui_configuration_widget(self, parent, get_option_by_name,
-            get_option_help, db, book_id=None):
-        '''
-        Called to create the widget used for configuring this plugin in the
-        calibre GUI. The widget must be an instance of the PluginWidget class.
-        See the builtin output plugins for examples.
-        '''
-        name = self.name.lower().replace(' ', '_')
-        return gui_configuration_widget(name, parent, get_option_by_name,
-                get_option_help, db, book_id, for_output=True)
