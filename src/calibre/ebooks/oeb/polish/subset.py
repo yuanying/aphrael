@@ -6,10 +6,9 @@ __copyright__ = '2013, Kovid Goyal <kovid at kovidgoyal.net>'
 __docformat__ = 'restructuredtext en'
 
 import os
-import sys
 from io import BytesIO
 
-from calibre import as_unicode, prints
+from calibre import as_unicode
 from calibre.ebooks.oeb.base import OEB_DOCS, OEB_STYLES, XPath, css_text
 from calibre.ebooks.oeb.polish.utils import OEB_FONTS
 from calibre.utils.fonts.subset import subset
@@ -108,23 +107,3 @@ def subset_all_fonts(container, font_stats, report):
     else:
         report(_('No embedded fonts found'))
     return changed
-
-
-if __name__ == '__main__':
-    from calibre.ebooks.oeb.polish.container import get_container
-    from calibre.ebooks.oeb.polish.stats import StatsCollector
-    from calibre.utils.logging import default_log
-    default_log.filter_level = default_log.DEBUG
-    inbook = sys.argv[-1]
-    ebook = get_container(inbook, default_log)
-    report = []
-    stats = StatsCollector(ebook).font_stats
-    subset_all_fonts(ebook, stats, report.append)
-    outbook, ext = inbook.rpartition('.')[0::2]
-    outbook += '_subset.'+ext
-    ebook.commit(outbook)
-    prints('\nReport:')
-    for msg in report:
-        prints(msg)
-    print()
-    prints('Output written to:', outbook)

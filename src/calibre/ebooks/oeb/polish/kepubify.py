@@ -30,7 +30,6 @@ from calibre.ebooks.oeb.polish.container import Container, EpubContainer, get_co
 from calibre.ebooks.oeb.polish.cover import find_cover_image, find_cover_image3, find_cover_page
 from calibre.ebooks.oeb.polish.errors import DRMError
 from calibre.ebooks.oeb.polish.parsing import decode_xml, parse
-from calibre.ebooks.oeb.polish.tts import lang_for_elem
 from calibre.ebooks.oeb.polish.utils import extract, insert_self_closing
 from calibre.spell.break_iterator import sentence_positions
 from calibre.srv.render_book import Profiler, calculate_number_of_workers
@@ -58,6 +57,14 @@ BLOCK_TAGS = frozenset((
 KOBO_CSS = 'div#book-inner { margin-top: 0; margin-bottom: 0; }'
 # Needed for Kobo renderer: https://bugs.launchpad.net/calibre/+bug/2138855
 KOBO_SPAN_CSS = '.koboSpan { -webkit-text-combine: inherit; }'
+
+
+def lang_for_elem(elem, parent_lang):
+    return canonicalize_lang(
+        elem.get('lang')
+        or elem.get('xml_lang')
+        or elem.get('{http://www.w3.org/XML/1998/namespace}lang')
+    ) or parent_lang
 
 
 @lru_cache(2)
@@ -709,7 +716,3 @@ def unkepubify_main(args=sys.argv):
             outpath = path[:-len('kepub.epub')] + 'epub'
         kepub_path = unkepubify_path(path, outpath, allow_overwrite=True)
         print(f'{path} converted to: {kepub_path}')
-
-
-if __name__ == '__main__':
-    kepubify_main()

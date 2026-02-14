@@ -26,7 +26,6 @@ from calibre.ebooks.conversion.archives import ARCHIVE_FMTS, unarchive
 from calibre.ebooks.conversion.preprocess import HTMLPreProcessor
 from calibre.ptempfile import PersistentTemporaryDirectory
 from calibre.utils.date import parse_date
-from calibre.utils.zipfile import ZipFile
 
 DEBUG_README=b'''
 This debug folder contains snapshots of the e-book as it passes through the
@@ -1016,13 +1015,6 @@ OptionRecommendation(name='search_replace',
             if not os.path.exists(out_dir):
                 os.makedirs(out_dir)
             self.dump_oeb(ret, out_dir)
-        if self.input_fmt == 'recipe':
-            zf = ZipFile(os.path.join(self.opts.debug_pipeline,
-                'periodical.downloaded_recipe'), 'w')
-            zf.add_dir(out_dir)
-            with self.input_plugin:
-                self.input_plugin.save_download(zf)
-            zf.close()
 
         self.log.info('Input debug saved to:', out_dir)
 
@@ -1068,10 +1060,7 @@ OptionRecommendation(name='search_replace',
         accelerators = {}
 
         tdir = PersistentTemporaryDirectory('_plumber')
-        stream = self.input if self.input_fmt == 'recipe' else \
-                open(self.input, 'rb')
-        if self.input_fmt == 'recipe':
-            self.opts.original_recipe_input_arg = self.original_input_arg
+        stream = open(self.input, 'rb')
 
         if hasattr(self.opts, 'lrf') and self.output_plugin.file_type == 'lrf':
             self.opts.lrf = True
@@ -1099,8 +1088,6 @@ OptionRecommendation(name='search_replace',
                 self.dump_input(self.oeb, tdir)
                 if self.abort_after_input_dump:
                     return
-            if self.input_fmt in ('recipe', 'downloaded_recipe'):
-                self.opts_to_mi(self.user_metadata)
             if not hasattr(self.oeb, 'manifest'):
                 self.oeb = create_oebbook(
                     self.log, self.oeb, self.opts,

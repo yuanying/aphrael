@@ -45,6 +45,16 @@ def test_show_version():
     pass
 
 
+@scenario('convert.feature', 'Reject removed list-recipes option')
+def test_reject_removed_list_recipes_option():
+    pass
+
+
+@scenario('convert.feature', 'Reject recipe input format')
+def test_reject_recipe_input_format():
+    pass
+
+
 # --- Fixtures ---
 
 @pytest.fixture
@@ -248,3 +258,14 @@ def then_display_version(cli_result):
     combined = cli_result['stdout'] + cli_result['stderr']
     # Should contain some version-like output
     assert combined.strip(), 'No version output produced'
+
+
+@then('the command should fail')
+def then_command_should_fail(cli_result):
+    assert cli_result['returncode'] != 0, 'Expected command failure, but it succeeded'
+
+
+@then(parsers.parse('output should contain "{text}"'))
+def then_output_should_contain(cli_result, text):
+    combined = cli_result['stdout'] + cli_result['stderr']
+    assert text in combined, f'Expected output to contain {text!r}, got:\n{combined[:1000]}'

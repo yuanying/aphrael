@@ -390,5 +390,4 @@ if __name__ == '__main__':
     subprocess.call(['kindlegen', 'index.epub'])  # kindlegen exit code is not 0 as we don't have a cover
     subprocess.check_call(['calibre-debug', 'index.mobi'])
 
-    from calibre.gui2.tweak_book.diff.main import main
-    main(['cdiff', 'decompiled_index/mobi8/ncx.record', 'x/ncx.record'])
+    subprocess.check_call(['diff', '-u', 'decompiled_index/mobi8/ncx.record', 'x/ncx.record'])

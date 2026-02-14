@@ -5,7 +5,6 @@ __license__   = 'GPL v3'
 __copyright__ = '2013, Kovid Goyal <kovid at kovidgoyal.net>'
 __docformat__ = 'restructuredtext en'
 
-import sys
 from functools import partial
 
 import regex
@@ -301,12 +300,3 @@ class StatsCollector:
         for fum in self.font_usage_map.values():
             for v in fum.values():
                 v['text'] = {safe_chr(x) for x in v['text']}
-
-
-if __name__ == '__main__':
-    from calibre.ebooks.oeb.polish.container import get_container
-    from calibre.utils.logging import default_log
-    default_log.filter_level = default_log.DEBUG
-    ebook = get_container(sys.argv[-1], default_log)
-    from pprint import pprint
-    pprint(StatsCollector(ebook, do_embed=True).font_stats)

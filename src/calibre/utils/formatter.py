@@ -2115,27 +2115,6 @@ class TemplateFormatter(string.Formatter):
             self.restore_state(state)
 
 
-class ValidateFormatter:
-    '''
-    Provides a formatter that uses a fake book. This class must be used only
-    in the GUI thread.
-
-    It is a class instead of a function for compatibility reasons.
-    '''
-
-    def validate(self, template):
-        from calibre.gui2 import is_gui_thread
-        if not is_gui_thread():
-            raise ValueError('A ValidateFormatter must only be used in the GUI thread')
-
-        from calibre.ebooks.metadata.book.base import get_model_metadata_instance
-        from calibre.ebooks.metadata.book.formatter import SafeFormat
-        return SafeFormat().unsafe_format(template, {}, get_model_metadata_instance())
-
-
-validation_formatter = ValidateFormatter()
-
-
 class EvalFormatter(TemplateFormatter):
     '''
     A template formatter that uses a simple dict instead of an mi instance
@@ -2146,7 +2125,3 @@ class EvalFormatter(TemplateFormatter):
             return ''
         key = key.lower()
         return kwargs.get(key, _('No such variable {0}').format(key))
-
-
-# DEPRECATED. This is not thread safe. Do not use.
-eval_formatter = EvalFormatter()

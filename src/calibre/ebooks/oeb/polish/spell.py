@@ -4,12 +4,11 @@
 __license__ = 'GPL v3'
 __copyright__ = '2014, Kovid Goyal <kovid at kovidgoyal.net>'
 
-import sys
 from collections import Counter, defaultdict
 
 from calibre import replace_entities
 from calibre.ebooks.oeb.base import barename
-from calibre.ebooks.oeb.polish.container import OPF_NAMESPACES, get_container
+from calibre.ebooks.oeb.polish.container import OPF_NAMESPACES
 from calibre.ebooks.oeb.polish.parsing import parse
 from calibre.ebooks.oeb.polish.toc import find_existing_nav_toc, find_existing_ncx_toc
 from calibre.spell.break_iterator import index_of, split_into_words
@@ -399,12 +398,3 @@ def undo_replace_word(container, undo_cache):
         container.replace(file_name, node.getroottree().getroot())
         changed.add(file_name)
     return changed
-
-
-if __name__ == '__main__':
-    import pprint
-
-    from calibre.gui2.tweak_book import dictionaries, set_book_locale
-    container = get_container(sys.argv[-1], tweak_mode=True)
-    set_book_locale(container.mi.language)
-    pprint.pprint(get_all_words(container, dictionaries.default_locale))

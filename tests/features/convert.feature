@@ -41,3 +41,13 @@ Feature: Ebook format conversion
   Scenario: Show version
     When I run aphrael with "--version"
     Then it should display version information
+
+  Scenario: Reject removed list-recipes option
+    When I run aphrael with "--list-recipes"
+    Then the command should fail
+    And output should contain "You must specify the input file"
+
+  Scenario: Reject recipe input format
+    When I run aphrael with "samples/news.recipe out.epub"
+    Then the command should fail
+    And output should contain "No plugin to handle input format: recipe"

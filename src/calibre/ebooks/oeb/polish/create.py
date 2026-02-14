@@ -5,7 +5,6 @@ __license__ = 'GPL v3'
 __copyright__ = '2013, Kovid Goyal <kovid at kovidgoyal.net>'
 
 import os
-import sys
 
 from lxml import etree
 
@@ -120,14 +119,3 @@ def create_book(mi, path, fmt='epub', opf_name='metadata.opf', html_name='start.
             zf.writestr(opf_name, opf)
             zf.writestr(html_name, HTML)
             zf.writestr(toc_name, ncx)
-
-
-if __name__ == '__main__':
-    from calibre.ebooks.metadata.book.base import Metadata
-    mi = Metadata('Test book', authors=('Kovid Goyal',))
-    path = sys.argv[-1]
-    ext = path.rpartition('.')[-1].lower()
-    if ext not in valid_empty_formats:
-        print('Unsupported format:', ext)
-        raise SystemExit(1)
-    create_book(mi, path, fmt=ext)

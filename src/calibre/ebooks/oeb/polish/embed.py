@@ -5,11 +5,8 @@ __license__   = 'GPL v3'
 __copyright__ = '2013, Kovid Goyal <kovid at kovidgoyal.net>'
 __docformat__ = 'restructuredtext en'
 
-import sys
-
 from lxml import etree
 
-from calibre import prints
 from calibre.ebooks.oeb.base import XHTML
 from calibre.utils.filenames import ascii_filename
 from calibre.utils.icu import lower as icu_lower
@@ -258,23 +255,3 @@ def embed_all_fonts(container, stats, report):
         etree.SubElement(head, XHTML('link'), rel='stylesheet', type='text/css', href=href).tail = '\n'
         container.dirty(spine_name)
     return True
-
-
-if __name__ == '__main__':
-    from calibre.ebooks.oeb.polish.container import get_container
-    from calibre.ebooks.oeb.polish.stats import StatsCollector
-    from calibre.utils.logging import default_log
-    default_log.filter_level = default_log.DEBUG
-    inbook = sys.argv[-1]
-    ebook = get_container(inbook, default_log)
-    report = []
-    stats = StatsCollector(ebook, do_embed=True)
-    embed_all_fonts(ebook, stats, report.append)
-    outbook, ext = inbook.rpartition('.')[0::2]
-    outbook += '_subset.'+ext
-    ebook.commit(outbook)
-    prints('\nReport:')
-    for msg in report:
-        prints(msg)
-    print()
-    prints('Output written to:', outbook)

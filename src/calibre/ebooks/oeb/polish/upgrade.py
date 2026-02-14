@@ -2,8 +2,6 @@
 # License: GPLv3 Copyright: 2018, Kovid Goyal <kovid at kovidgoyal.net>
 
 
-import sys
-
 from calibre.ebooks.conversion.plugins.epub_input import ADOBE_OBFUSCATION, IDPF_OBFUSCATION
 from calibre.ebooks.metadata.opf3 import XPath
 from calibre.ebooks.metadata.opf_2_to_3 import upgrade_metadata
@@ -175,15 +173,3 @@ def upgrade_book(container, report, remove_ncx=True):
     epub_2_to_3(container, report, remove_ncx=remove_ncx)
     report(_('Updated EPUB from version 2 to 3'))
     return True
-
-
-if __name__ == '__main__':
-    from calibre.ebooks.oeb.polish.container import get_container
-    from calibre.utils.logging import default_log
-    default_log.filter_level = default_log.DEBUG
-    inbook = sys.argv[-1]
-    ebook = get_container(inbook, default_log)
-    if upgrade_book(ebook, print):
-        outbook = inbook.rpartition('.')[0] + '-upgraded.' + inbook.rpartition('.')[-1]
-        ebook.commit(outbook)
-        print('Upgraded book written to:', outbook)
