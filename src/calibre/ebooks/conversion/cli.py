@@ -66,12 +66,9 @@ def check_command_line_options(parser, args, log):
         raise SystemExit(1)
 
     input = os.path.abspath(args[1])
-    if not input.endswith('.recipe') and not os.access(input, os.R_OK) and not \
-            ('-h' in args or '--help' in args):
+    if not os.access(input, os.R_OK) and not ('-h' in args or '--help' in args):
         log.error('Cannot read from', input)
         raise SystemExit(1)
-    if input.endswith('.recipe') and not os.access(input, os.R_OK):
-        input = args[1]
 
     output_fmt_override = None
     default_output_mode = False
@@ -127,14 +124,6 @@ def option_recommendation_to_cli_option(add_option, rec):
             ' dialog. Once you create the rules, you can use the "Export" button'
             ' to save them to a file.'
         )
-    elif opt.name == 'recipe_specific_option':
-        attrs['action'] = 'append'
-        attrs['help'] = _(
-            'Recipe specific options. Syntax is option_name:value. For example:'
-            ' {example}. Can be specified multiple'
-            ' times to set different options. To see a list of all available options'
-            ' for a recipe, use {list}.'
-        ).format(example='--recipe-specific-option=date:2030-11-31', list='--recipe-specific-option=list')
     if opt.name in DEFAULT_TRUE_OPTIONS and rec.recommended_value is True:
         switches = ['--disable-'+opt.long_switch]
     add_option(Option(*switches, **attrs))
@@ -144,48 +133,13 @@ def group_titles():
     return _('INPUT OPTIONS'), _('OUTPUT OPTIONS')
 
 
-def recipe_test(option, opt_str, value, parser):
-    assert value is None
-    value = []
-
-    def floatable(s):
-        try:
-            float(s)
-            return True
-        except ValueError:
-            return False
-
-    for arg in parser.rargs:
-        # stop on --foo like options
-        if arg[:2] == '--':
-            break
-        # stop on -a, but not on -3 or -3.0
-        if arg[:1] == '-' and len(arg) > 1 and not floatable(arg):
-            break
-        try:
-            value.append(int(arg))
-        except (TypeError, ValueError, AttributeError):
-            break
-        if len(value) == 2:
-            break
-    del parser.rargs[:len(value)]
-
-    while len(value) < 2:
-        value.append(2)
-
-    setattr(parser.values, option.dest, tuple(value))
-
-
 def add_input_output_options(parser, plumber):
     input_options, output_options = \
                                 plumber.input_options, plumber.output_options
 
     def add_options(group, options):
         for opt in options:
-            if plumber.input_fmt == 'recipe' and opt.option.long_switch == 'test':
-                group(Option('--test', dest='test', action='callback', callback=recipe_test))
-            else:
-                option_recommendation_to_cli_option(group, opt)
+            option_recommendation_to_cli_option(group, opt)
 
     if input_options:
         title = group_titles()[0]
@@ -292,12 +246,7 @@ def add_pipeline_options(parser, plumber):
 
 
 def option_parser():
-    parser = OptionParser(usage=USAGE)
-    parser.add_option('--list-recipes', default=False, action='store_true',
-            help=_('List builtin recipe names. You can create an e-book from '
-                'a builtin recipe like this: aphrael "Recipe Name.recipe" '
-                'output.epub'))
-    return parser
+    return OptionParser(usage=USAGE)
 
 
 class ProgressBar:
@@ -317,10 +266,6 @@ def create_option_parser(args, log):
         log(os.path.basename(args[0]), '('+__appname__, __version__+')')
         log('Created by:', __author__)
         raise SystemExit(0)
-    if '--list-recipes' in args:
-        log('Recipes are not supported in aphrael')
-        raise SystemExit(0)
-
     parser = option_parser()
     if len(args) < 2:
         print_help(parser, log)
