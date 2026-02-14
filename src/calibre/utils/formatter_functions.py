@@ -21,13 +21,13 @@ from datetime import datetime, timedelta
 from enum import Enum, auto
 from functools import partial
 from math import ceil, floor, modf, trunc
+from urllib.parse import quote, quote_plus
 
 from calibre import human_readable, prepare_string_for_xml, prints
 from calibre.constants import DEBUG
 from calibre.db.constants import DATA_DIR_NAME, DATA_FILE_PATTERN
 from calibre.ebooks.metadata import title_sort
 from calibre.ebooks.metadata.book.base import field_metadata
-from calibre.ebooks.metadata.search_internet import qquote
 from calibre.utils.config import tweaks
 from calibre.utils.date import UNDEFINED_DATE, format_date, now, parse_date
 from calibre.utils.icu import capitalize, sort_key, strcmp
@@ -35,6 +35,16 @@ from calibre.utils.icu import lower as icu_lower
 from calibre.utils.localization import _ as xlated
 from calibre.utils.localization import calibre_langcode_to_name, canonicalize_lang
 from calibre.utils.titlecase import titlecase
+
+
+def qquote(val, use_plus=True):
+    if not isinstance(val, bytes):
+        val = val.encode('utf-8', 'replace')
+    ans = quote_plus(val) if use_plus else quote(val)
+    if isinstance(ans, bytes):
+        ans = ans.decode('utf-8')
+    return ans
+
 
 UNKNOWN = _('Unknown')
 RELATIONAL = _('Relational')

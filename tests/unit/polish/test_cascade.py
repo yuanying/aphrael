@@ -4,6 +4,10 @@
 __license__ = 'GPL v3'
 __copyright__ = '2016, Kovid Goyal <kovid at kovidgoyal.net>'
 
+import pytest
+
+pytest.importorskip('calibre.ebooks.oeb.polish.stats', exc_type=ImportError)
+
 from functools import partial
 
 from css_parser import parseStyle
@@ -15,9 +19,9 @@ from calibre.ebooks.oeb.polish.container import ContainerBase, href_to_name
 from calibre.ebooks.oeb.polish.css import remove_property_value
 from calibre.ebooks.oeb.polish.embed import find_matching_font
 from calibre.ebooks.oeb.polish.stats import StatsCollector, font_keys, normalize_font_properties, prepare_font_rule
-from calibre.ebooks.oeb.polish.tests.base import BaseTest
 from calibre.utils.icu import lower as icu_lower
 from calibre.utils.logging import Log, Stream
+from tests.unit.polish.base import BaseTest
 
 
 class VirtualContainer(ContainerBase):

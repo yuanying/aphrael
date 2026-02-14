@@ -9,9 +9,19 @@ from css_selectors.select import Select, get_parsed_selector
 from html5_parser import parse
 from lxml import etree
 
-from calibre.ebooks.metadata.tag_mapper import uniq
 from calibre.ebooks.oeb.base import OEB_DOCS, XPath
 from calibre.ebooks.oeb.parse_utils import XHTML
+from calibre.utils.icu import lower as icu_lower
+
+
+def uniq(vals, kmap=icu_lower):
+    ''' Remove all duplicates from vals, while preserving order. kmap must be a
+    callable that returns a hashable value for every item in vals '''
+    vals = vals or ()
+    lvals = (kmap(x) for x in vals)
+    seen = set()
+    seen_add = seen.add
+    return [x for x, k in zip(vals, lvals) if k not in seen and not seen_add(k)]
 
 
 def non_empty_validator(label, val):

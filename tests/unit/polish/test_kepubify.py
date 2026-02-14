@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # License: GPLv3 Copyright: 2025, Kovid Goyal <kovid at kovidgoyal.net>
 
+import pytest
+
+pytest.importorskip('calibre.spell.break_iterator')
 
 from calibre.ebooks.oeb.base import OEB_DOCS, OEB_STYLES
 from calibre.ebooks.oeb.polish.container import EpubContainer, get_container
@@ -17,7 +20,7 @@ from calibre.ebooks.oeb.polish.kepubify import (
     unkepubify_path,
 )
 from calibre.ebooks.oeb.polish.parsing import parse
-from calibre.ebooks.oeb.polish.tests.base import BaseTest, get_book_for_kepubify
+from tests.unit.polish.base import BaseTest, get_book_for_kepubify
 
 
 class KepubifyTests(BaseTest):

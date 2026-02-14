@@ -1062,18 +1062,6 @@ OptionRecommendation(name='search_replace',
         tdir = PersistentTemporaryDirectory('_plumber')
         stream = open(self.input, 'rb')
 
-        if hasattr(self.opts, 'lrf') and self.output_plugin.file_type == 'lrf':
-            self.opts.lrf = True
-        if self.input_fmt == 'azw4' and self.output_plugin.file_type == 'pdf':
-            self.ui_reporter(0.01, 'AZW4 files are simply wrappers around PDF files.'
-                             ' Skipping the conversion and unwrapping the embedded PDF instead')
-            from calibre.ebooks.azw4.reader import unwrap
-            unwrap(stream, self.output)
-            self.ui_reporter(1.)
-            self.log(self.output_fmt.upper(), 'output written to', self.output)
-            self.flush()
-            return
-
         self.ui_reporter(0.01, _('Converting input to HTML...'))
         ir = CompositeProgressReporter(0.01, 0.34, self.ui_reporter)
         self.input_plugin.report_progress = ir
@@ -1183,15 +1171,12 @@ OptionRecommendation(name='search_replace',
 
         oibl = self.opts.insert_blank_line
         orps  = self.opts.remove_paragraph_spacing
-        if self.output_plugin.file_type == 'lrf':
-            self.opts.insert_blank_line = False
-            self.opts.remove_paragraph_spacing = False
         line_height = self.opts.line_height
         if line_height < 1e-4:
             line_height = None
 
         if self.opts.linearize_tables and \
-                self.output_plugin.file_type not in ('mobi', 'lrf'):
+                self.output_plugin.file_type != 'mobi':
             from calibre.ebooks.oeb.transforms.linearize_tables import LinearizeTables
             LinearizeTables()(self.oeb, self.opts)
 
@@ -1200,8 +1185,8 @@ OptionRecommendation(name='search_replace',
             UnsmartenPunctuation()(self.oeb, self.opts)
 
         mobi_file_type = getattr(self.opts, 'mobi_file_type', 'old')
-        needs_old_markup = (self.output_plugin.file_type == 'lit' or (
-            self.output_plugin.file_type == 'mobi' and mobi_file_type == 'old'))
+        needs_old_markup = (
+            self.output_plugin.file_type == 'mobi' and mobi_file_type == 'old')
         transform_css_rules = ()
         if self.opts.transform_css_rules:
             transform_css_rules = self.opts.transform_css_rules
